@@ -1,0 +1,115 @@
+# Virtual environments
+.venv/
+*/.venv/
+venv/
+*/venv/
+ENV/
+env/
+
+# Python cache & artifacts
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*/pipeline.egg-info/
+dist/
+build/
+.pytest_cache/
+*/.pytest_cache/
+.coverage
+htmlcov/
+
+# Local / temporary runtime artifacts
+tmp_probe/
+*/tmp_probe/
+pipeline/runs/
+runs/
+*.log
+pipeline/backups/
+backups/
+
+# Database / SQLite runtime files
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+pipeline/data/
+
+# Large model weights (> 100 MB, HuggingFace / local)
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+pipeline/models/f5_ru/*.safetensors
+
+# Media outputs / generated audio & video
+*.mp4
+*.m4a
+*.wav
+*.mp3
+
+# Keep reference audio
+!pipeline/models/f5_ref/ref_audio.wav
+все материалы/
+
+# Sensitive configs, secrets & browser profiles / credentials
+.env
+*.env
+.env.*
+*/.env
+*.bak
+*_cookies.txt
+client_secret.json
+client_secret*.json
+!client_secret.example.json
+*/client_secret.json
+*/client_secret*.json
+!*/client_secret.example.json
+pipeline/config/ui_settings.yaml
+config/ui_settings.yaml
+pipeline/grey_plugins/antidetect/data/
+grey_plugins/antidetect/data/
+
+# Local scratch and test scripts (kept locally, excluded from git)
+pipeline/test_adapt_call.py
+pipeline/test_free_models.py
+pipeline/check_error.py
+pipeline/clean_acts.py
+pipeline/fix_ep0012_subtitles.py
+pipeline/generate_spanish_civil_war_script.py
+pipeline/launch_spanish_civil_war_episode.py
+pipeline/run_de_test.py
+pipeline/run_en_test.py
+pipeline/test_silence*.mp3
+test_adapt_call.py
+test_free_models.py
+check_error.py
+clean_acts.py
+fix_ep0012_subtitles.py
+generate_spanish_civil_war_script.py
+launch_spanish_civil_war_episode.py
+run_de_test.py
+run_en_test.py
+test_silence*.mp3
+
+# Binaries in grey_plugins
+*/proxy_kit/xray.exe
+*/proxy_kit/Xray-windows-64.zip
+
+# Standalone git backup
+.git_standalone_backup/
+*/.git_standalone_backup/
+
+# IDE & OS files
+.zcode/
+.idea/
+.vscode/
+Thumbs.db
+Desktop.ini
+.DS_Store

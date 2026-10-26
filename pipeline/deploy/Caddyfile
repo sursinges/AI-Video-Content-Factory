@@ -1,0 +1,6 @@
+# Caddy reverse proxy with automatic Let's Encrypt HTTPS.
+# Replace __DOMAIN__ by install.sh (PIPELINE_DOMAIN env).
+__DOMAIN__ {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8765
+}

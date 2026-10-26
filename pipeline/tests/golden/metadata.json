@@ -1,0 +1,8 @@
+{
+  "title": "Осада Константинополя 1453",
+  "description": "Спокойная история под засыпание.",
+  "tags": ["история", "сон"],
+  "chapters": [{"t": "00:00", "label": "Начало"}],
+  "thumbnail": {"ref": null, "text_overlay": "1453", "asset": null},
+  "youtube": {"made_for_kids": false, "synthetic_disclosure": true}
+}

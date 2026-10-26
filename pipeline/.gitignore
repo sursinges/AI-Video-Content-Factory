@@ -1,0 +1,27 @@
+# runtime artifacts
+runs/
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# secrets
+.env
+grey_plugins/
+models/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+tmp_probe/
+*.wav
+*.mp3
+spanish_civil_war_acts/
+
+backups/

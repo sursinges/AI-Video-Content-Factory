@@ -1,0 +1,15 @@
+# YouTube publishing account pool (M6).
+# PRIVACY: Each channel can route through its own proxy so IP addresses do not cross-link channels.
+#
+# proxy: "http://user:pass@host:port" or "socks5://host:port"
+rotation: manual        # manual | round_robin | schedule
+accounts:
+  - id: acc1
+    label: Primary Channel
+    oauth_profile: acc1
+    default: true
+    proxy: null           # "http://user:pass@host:port" (optional)
+  # - id: acc2
+  #   label: Secondary Channel
+  #   oauth_profile: acc2
+  #   proxy: "socks5://host:port"

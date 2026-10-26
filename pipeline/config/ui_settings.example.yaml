@@ -1,0 +1,8 @@
+# Host UI Settings (sample)
+# Copy to ui_settings.yaml to customize locally
+cookies_path: ""
+proxy_default: ""
+hosted_mode: false
+registration_open: false
+max_concurrent_runs: 1
+max_tenant_disk_mb: 2048

@@ -1,0 +1,26 @@
+{
+  "title_working": "Осада Константинополя 1453",
+  "hook_summary": "MOCK HOOK",
+  "chunks": [
+    {
+      "part": 1, "role": "intro", "form": 1,
+      "text": "Первый чанк сценария для озвучки.",
+      "char_count": 33, "critic_pass": true,
+      "factcheck": {"status": "pass", "claims": []}
+    },
+    {
+      "part": 2, "role": "body", "form": 2,
+      "text": "Второй чанк сценария для озвучки.",
+      "char_count": 33, "critic_pass": true,
+      "factcheck": {"status": "warnings",
+                    "claims": [{"text": "некое утверждение", "verdict": "flagged"}]}
+    },
+    {
+      "part": 3, "role": "final", "form": 3,
+      "text": "Финальный чанк. Спокойной ночи.",
+      "char_count": 31, "critic_pass": true,
+      "factcheck": {"status": "pass", "claims": []}
+    }
+  ],
+  "full_text_char_count": 97
+}

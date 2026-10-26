@@ -1,0 +1,15 @@
+# Example Manifest: Educational Narrative (16:9)
+# Ideal for historical stories, science documentaries, and atmospheric narratives.
+run_id: ep-educational-story-demo
+channel_id: history_chronicles
+topic: "The Enigma of the Antikythera Mechanism"
+format: educational_narrative
+target_minutes: 3
+language: en
+reference_urls: []
+profile: config/channel.profile.yaml
+overrides:
+  visual:
+    preset: dark_history_cinematic
+  audio_mix:
+    music_mood: "calm ambient night"

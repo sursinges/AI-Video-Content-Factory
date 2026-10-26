@@ -1,0 +1,185 @@
+# Provider registry (architecture §3.2). Defaults are mocks until real keys
+# appear; any OpenAI-compatible endpoint is configured here without code.
+interface_lang: en       # en | ru — CLI/UI messages
+budget_limit_usd: 0.0    # 0 => paid providers are refused; raise explicitly
+grey: false              # grey_plugins/ layer switch (personal use only)
+
+defaults:
+  llm: openrouter      # real: glm-5.2:free via OpenRouter (owner-provided key)
+  tts: smallest_ai     # Smallest.ai Waves Lightning TTS (voice magnus)
+  stt: mock_stt        # S2 uses local faster-whisper, not a provider
+  image: vheer_browser # vheer.com free generation
+  music: ambient_synth   # procedural ambient synth (ffmpeg); library_music — local music tracks
+  search: mock_search
+  publish: mock_publish
+
+# Fallback chains: first entry that fails moves to the next (architecture §3.2).
+fallbacks:
+  image: [local_sd]    # vheer rate-limited/down -> local Stable Diffusion
+  tts: [silero]        # F5 glitch -> Silero (still much better than stopping)
+  llm: []              # b_ai disabled while balance=0; re-enable after top-up
+
+providers:
+  mock:
+    type: llm
+    adapter: mock
+    model: mock
+  mock_tts:
+    type: tts
+    adapter: mock
+  mock_stt:
+    type: stt
+    adapter: mock
+  mock_image:
+    type: image
+    adapter: mock
+  mock_music:
+    type: music
+    adapter: mock
+  mock_search:
+    type: search
+    adapter: mock
+  mock_publish:
+    type: publish
+    adapter: mock
+
+  # Owner-provided LLM (tested 2026-09-12, works)
+  b_ai:
+    type: llm
+    adapter: openai_compatible
+    base_url: https://api.b.ai/v1
+    model: mimo-v2.5
+    api_key_ref: B_AI_API_KEY
+    timeout_sec: 180
+
+  # Smallest.ai Waves Lightning TTS (tested & working with Russian & English)
+  smallest_ai:
+    type: tts
+    adapter: smallest_ai
+    voice_id: magnus
+    model: lightning_v3.1
+    speed: 0.95
+    output_format: mp3
+    api_key_ref: SMALLEST_AI_API_KEY
+
+  # F5-TTS Russian finetune (hotstone228, 813k steps, MIT) — owner pick for
+  # live-quality narration. Voice = reference sample (5-12 s) + its transcript;
+  # current reference was synthesized by Silero — replace ref_audio with a real
+  # narrator sample anytime for a different voice.
+  f5_ru:
+    type: tts
+    adapter: f5_tts
+    model_name: F5TTS_v1_Base
+    ckpt_file: models/f5_ru/model_last.safetensors
+    vocab_file: models/f5_ru/vocab.txt
+    ref_audio: models/f5_ref/ref_audio.wav
+    ref_text: "Он стоял у самого края моста и смотрел, как вода уносит последние листья осени. Город вокруг затихал, и каждый шаг эхом отзывался в тишине."
+    speed: 0.9
+
+  # Chatterbox Multilingual (Resemble AI, MIT): 23 languages incl. ru, pl,
+  # tr, ... (NO cs in pip v0.1.7 — cs rides on xtts). Ref audio = voice clone.
+  chatterbox:
+    type: tts
+    adapter: chatterbox
+    ref_audio: models/f5_ref/ref_audio.wav   # replace with a real narrator sample
+    exaggeration: 0.4
+    cfg_weight: 0.7
+
+  # XTTS v2 (CPML — NON-COMMERCIAL, stage-1 only): covers cs and other small
+  # languages chatterbox lacks. Replace in stage 2 (chatterbox v3 / per-lang finetunes).
+  xtts:
+    type: tts
+    adapter: xtts
+    ref_audio: models/f5_ref/ref_audio.wav
+
+  # Local TTS: Silero v4 ru, MIT license (product-safe). Speakers: aidar,
+  # baya, eugene, kseniya, xenia. First call downloads the model via torch.hub.
+  silero:
+    type: tts
+    adapter: silero
+    model_id: v4_ru
+    speaker: eugene     # calm male; try kseniya/xenia for female
+
+  # Procedural ambient: ffmpeg-synthesized bed (no files, no licensing).
+  # mood: night | rain | wind | drone | fire | space
+  ambient_synth:
+    type: music
+    adapter: ambient_synth
+    mood: night
+
+  # Music: local library of manually downloaded YouTube Audio Library tracks
+  # (models/music/, filename = mood: calm_01.mp3). Scan: tools/music_library.
+  # Openverse (WordPress) — поиск CC/CC0-музыки по ключевым словам, БЕЗ ключа
+  openverse_music:
+    type: music
+    adapter: openverse_music
+
+  # Freesound (freesound.org) — CC/CC0-каталог звуков и музыки, бесплатный
+  # токен -> .env FREESOUND_TOKEN; качается HQ MP3-превью (для фона хватает).
+  # Опционально license_filter: 'license:"Creative Commons 0"' — только CC0.
+  freesound_music:
+    type: music
+    adapter: freesound_music
+    api_key_ref: FREESOUND_TOKEN
+
+  # GAP-01 scaffold: image->video. mock_video renders a real mp4 (slow zoom
+  # on the scene image) — lets tests cover the video path without keys.
+  mock_video:
+    type: video
+    adapter: mock
+
+  # fal.ai (Kling/Seedance-class image->video, BYOK): FAL_KEY in .env.
+  # ~$0.2-1 per clip — decide per-hero-scene; m3/m4 wiring comes with a key.
+  fal_video:
+    type: video
+    adapter: fal_video
+    api_key_ref: FAL_KEY
+    model: fal-ai/kling-video/v1.6/standard/image-to-video
+
+  library_music:
+    type: music
+    adapter: library_music
+    path: models/music
+
+  # Music: auto-search by keywords via Jamendo (open CC catalog; free
+  # client_id from devportal.jamendo.com -> .env JAMENDO_CLIENT_ID).
+  # NOTE: pixabay discontinued its public music API (404) — removed 2026-09-13.
+  jamendo_music:
+    type: music
+    adapter: jamendo_music
+    api_key_ref: JAMENDO_CLIENT_ID
+    default_query: "calm ambient night"
+
+  # vheer.com free generation via headless browser (owner decision). Free
+  # tier, no credits; slow queue possible — local_sd is the fallback.
+  vheer_browser:
+    type: image
+    adapter: vheer_browser
+    url: https://vheer.com/app/text-to-image
+    headless: true
+    # proxy: "http://user:pass@host:port"
+    # user_data_dir: runs/_vheer_profile   # persistent session
+
+  # Local Stable Diffusion on the 3070 Ti (fp16, attention slicing).
+  # First call downloads the model (~4 GB) from HuggingFace.
+  local_sd:
+    type: image
+    adapter: local_sd
+    model: stable-diffusion-v1-5/stable-diffusion-v1-5
+    steps: 25
+    guidance: 7.0
+
+  # YouTube publish (REAL upload) — activates when owner drops
+  # client_secret*.json into pipeline/ (Google Cloud OAuth Desktop client).
+  youtube_api:
+    type: publish
+    adapter: youtube_api
+
+  # OpenRouter provider (glm-5.2:free, owner key)
+  openrouter:
+    type: llm
+    adapter: openai_compatible
+    base_url: https://openrouter.ai/api/v1
+    model: z-ai/glm-5.2:free
+    api_key_ref: OPENROUTER_API_KEY
+    timeout_sec: 180

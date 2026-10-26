@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+  html,body { margin:0; width:100%; height:100%; overflow:hidden;
+              font-family:Georgia,'Times New Roman',serif; background:#0d0d0f; }
+  .stage { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .mark { font-size:20vmin; color:#afddff; opacity:0; line-height:1; position:absolute;
+          top:5vh; left:7vw; font-family:'Inter',sans-serif; }
+  .quote { max-width:82vw; font-size:6vmin; font-style:italic; color:#e8e8ea;
+           line-height:1.35; text-align:center; opacity:0; }
+  .author { margin-top:4vmin; font-size:2.4vmin; color:#8f9095; text-align:center;
+            letter-spacing:0.2vmin; opacity:0; }
+</style></head>
+<body>
+<div class="stage">
+  <div>
+    <div class="mark">"</div>
+    <div class="quote">{{QUOTE}}</div>
+    <div class="author">{{AUTHOR}}</div>
+  </div>
+</div>
+<script>
+const D = {{DURATION}};
+const V = () => Math.min(innerWidth, innerHeight) / 100;
+function renderFrame(t) {
+  const v = V();
+  const q = document.querySelector('.quote');
+  const a = document.querySelector('.author');
+  const mk = document.querySelector('.mark');
+  const e1 = Math.min(t / 1.2, 1);
+  const k1 = 1 - Math.pow(1 - e1, 3);
+  const out = Math.max((t - (D - 0.8)) / 0.8, 0);
+  q.style.opacity = k1 * (1 - out);
+  a.style.opacity = Math.min(Math.max((t - 0.9) / 0.9, 0), 1) * (1 - out);
+  mk.style.opacity = Math.min(t / 0.5, 1) * (1 - out);
+  q.style.transform = `translateY(${2.2 * v * (1 - k1)}px)`;
+}
+window.renderFrame = renderFrame;
+</script>
+</body></html>

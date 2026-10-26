@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+  html,body { margin:0; width:100%; height:100%; overflow:hidden;
+              font-family:'Inter','Segoe UI',sans-serif; background:#0b0c10; }
+  .frame { position:absolute; left:6vw; bottom:8vh; width:60vw;
+           padding:2.4vmin 3.2vmin; border-left:0.3vmin solid #afddff;
+           background:rgba(10,12,16,0.82); }
+  .top { font-size:1.9vmin; letter-spacing:0.3vmin; color:#afddff; text-transform:uppercase;
+         opacity:0; transform:translateX(-2.8vmin); }
+  .main { font-size:3.9vmin; font-weight:600; color:#ffffff; margin-top:1.1vmin; line-height:1.2;
+          opacity:0; transform:translateX(-3.7vmin); }
+</style></head>
+<body>
+<div class="frame">
+  <div class="top">{{TOP}}</div>
+  <div class="main">{{MAIN}}</div>
+</div>
+<script>
+const D = {{DURATION}};
+const V = () => Math.min(innerWidth, innerHeight) / 100;
+function renderFrame(t) {
+  const v = V();
+  const e = Math.min(t / 0.7, 1);
+  const k = 1 - Math.pow(1 - e, 3);
+  const out = Math.max((t - (D - 0.6)) / 0.6, 0);
+  const o = k * (1 - out);
+  document.querySelector('.top').style.opacity = o;
+  document.querySelector('.top').style.transform = `translateX(${-2.8 * v * (1 - k)}px)`;
+  document.querySelector('.main').style.opacity = Math.min(t / 0.9, 1) * (1 - out);
+  document.querySelector('.main').style.transform = `translateX(${-3.7 * v * (1 - Math.min(t / 0.9, 1))}px)`;
+}
+window.renderFrame = renderFrame;
+</script>
+</body></html>

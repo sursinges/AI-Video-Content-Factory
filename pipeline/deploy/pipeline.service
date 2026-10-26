@@ -1,0 +1,18 @@
+[Unit]
+Description=pipeline — AI video production host
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__TARGET__
+ExecStart=__TARGET__/.venv/bin/python -c "from ui.server import main; main(port=8765, host='127.0.0.1')"
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+# Tenants data root is resolved per request; nothing secret here.
+# UI_TOKEN=... (optional, in config/ui_settings.yaml or .env)
+
+[Install]
+WantedBy=multi-user.target

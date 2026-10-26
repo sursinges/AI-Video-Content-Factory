@@ -1,0 +1,33 @@
+# Visual style presets for image generators (Vheer, Stable Diffusion, etc.)
+# Selectable via channel profile (visual.preset) or per-run manifest.
+
+default_preset: dark_history_cinematic
+
+presets:
+  dark_history_cinematic:
+    name: "Dark History (Cinematic 35mm)"
+    description: "Moody historical documentary, authentic 35mm film textures, volumetric lighting, deep chiaroscuro shadows, and desaturated natural tones."
+    style_prompt: "dark historical documentary, authentic archival atmosphere, moody volumetric cinematic lighting, deep dramatic shadows, chiaroscuro, 35mm film photograph, gritty realistic textures, desaturated historical palette, photorealistic, 8k, cinematic composition, masterwork"
+    negative_prompt: "cartoon, 3d render, anime, cgi, vibrant bright colors, neon, oversaturated, smooth plastic, digital illustration, drawing, painting, collage, split screen, multiple frames, distorted faces, modern objects, watermark, text, signature, bad anatomy"
+    quality_tags: "photorealistic, 8k, sharp focus, masterpiece"
+
+  dark_oil_painting:
+    name: "Dark Classical (Oil Painting)"
+    description: "Classical historical oil painting aesthetic inspired by Rembrandt and Caravaggio, deep expressive shadows, rich paint textures, museum archival quality."
+    style_prompt: "dark classical historical oil painting, chiaroscuro lighting, deep expressive shadows, rich paint textures, museum archival quality, somber emotional mood"
+    negative_prompt: "photo, 3d render, anime, plastic, digital art, bright neon, collage, multiple panels, text, watermark"
+    quality_tags: "masterpiece, fine art, textured canvas"
+
+  vintage_photograph:
+    name: "Archival Vintage (Early 20th Century)"
+    description: "Vintage archival black-and-white photography, subtle sepia toning, authentic analog film grain, documentary historical realism."
+    style_prompt: "archival historical black and white photograph with subtle warm sepia toning, 1930s silver gelatin print, authentic film grain, documentary realism, dramatic natural light"
+    negative_prompt: "colorized, modern digital photo, cartoon, 3d render, anime, shiny, text, watermark, collage"
+    quality_tags: "authentic archival photo, historical artifact"
+
+  flat_vector_night:
+    name: "Flat Vector Modern (Minimalist Night)"
+    description: "Clean minimalist vector art, soft curves, deep midnight-blue and amber gold palette, atmospheric night illumination."
+    style_prompt: "flat vector night scene, calm sleep mood, dark deep blue and amber palette, elegant minimalistic shapes, atmospheric soft moonlight"
+    negative_prompt: "photorealism, 3d render, complex messy details, noisy textures, neon, bright harsh lights, text, watermark"
+    quality_tags: "clean vector art, soothing aesthetic"

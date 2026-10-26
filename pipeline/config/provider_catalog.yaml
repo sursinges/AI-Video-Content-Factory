@@ -1,0 +1,124 @@
+# Catalog of popular providers for one-click key setup (settings UI).
+# core stays BYOK/neutral: this is just a convenience list.
+
+catalog:
+  - id: openrouter
+    name: OpenRouter (100+ models, single key)
+    icon: OR
+    type: llm
+    adapter: openai_compatible
+    base_url: https://openrouter.ai/api/v1
+    default_model: google/gemini-2.5-flash
+    key_ref: OPENROUTER_API_KEY
+    docs: https://openrouter.ai/keys
+  - id: anthropic_claude
+    name: Anthropic Claude
+    icon: CL
+    type: llm
+    adapter: openai_compatible
+    base_url: https://api.anthropic.com/v1
+    default_model: claude-sonnet-4
+    key_ref: ANTHROPIC_API_KEY
+    docs: https://console.anthropic.com/settings/keys
+  - id: openai_chatgpt
+    name: OpenAI ChatGPT
+    icon: OG
+    type: llm
+    adapter: openai_compatible
+    base_url: https://api.openai.com/v1
+    default_model: gpt-5.4-mini
+    key_ref: OPENAI_API_KEY
+    docs: https://platform.openai.com/api-keys
+  - id: gemini
+    name: Google Gemini (Free tier available)
+    icon: GM
+    type: llm
+    adapter: openai_compatible
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai
+    default_model: gemini-2.5-flash
+    key_ref: GEMINI_API_KEY
+    docs: https://aistudio.google.com/app/apikey
+  - id: ollama_local
+    name: Ollama (Local open-weight models, no key)
+    icon: OL
+    type: llm
+    adapter: openai_compatible
+    base_url: http://127.0.0.1:11434/v1
+    default_model: llama3.1
+    key_ref: ""
+    docs: https://ollama.com
+  - id: smallest_ai
+    name: Smallest.ai Waves (Lightning-fast TTS)
+    icon: SM
+    type: tts
+    adapter: smallest_ai
+    default_model: lightning_v3.1
+    key_ref: SMALLEST_AI_API_KEY
+    docs: https://smallest.ai
+  - id: elevenlabs
+    name: ElevenLabs (Expressive voice cloning)
+    icon: EL
+    type: tts
+    adapter: openai_compatible
+    base_url: ""
+    default_model: eleven_multilingual_v2
+    key_ref: ELEVENLABS_API_KEY
+    docs: https://elevenlabs.io/app/settings/api-keys
+  - id: cartesia
+    name: Cartesia Sonic (Low-latency TTS)
+    icon: CA
+    type: tts
+    adapter: openai_compatible
+    base_url: ""
+    default_model: sonic-2
+    key_ref: CARTESIA_API_KEY
+    docs: https://cartesia.ai
+  - id: falai
+    name: fal.ai (FLUX image & video models)
+    icon: FA
+    type: image
+    adapter: openai_compatible
+    base_url: https://fal.run
+    default_model: flux/dev
+    key_ref: FAL_KEY
+    docs: https://fal.ai/dashboard/keys
+  - id: youtube_api
+    name: YouTube Data API (Publishing & Analytics)
+    icon: YT
+    type: publish
+    adapter: youtube_api
+    default_model: ""
+    key_ref: YOUTUBE_API_KEY
+    docs: https://console.cloud.google.com/apis/library/youtube.googleapis.com
+  - id: jamendo
+    name: Jamendo Music (Royalty-free CC music)
+    icon: JM
+    type: music
+    adapter: jamendo_music
+    default_model: ""
+    key_ref: JAMENDO_CLIENT_ID
+    docs: https://devportal.jamendo.com
+  - id: openverse
+    name: Openverse (Royalty-free audio search)
+    icon: OV
+    type: music
+    adapter: openverse_music
+    default_model: ""
+    key_ref: ""
+    docs: https://api.openverse.org/
+  - id: freesound
+    name: Freesound (CC0 sound effects & audio)
+    icon: FS
+    type: music
+    adapter: freesound_music
+    default_model: ""
+    key_ref: FREESOUND_TOKEN
+    docs: https://freesound.org/api/apply/
+  - id: fal_ai
+    name: "fal.ai Video (Kling & Gen3 Image-to-Video)"
+    icon: FV
+    type: video
+    adapter: fal_video
+    default_model: fal-ai/kling-video/v1.6/standard/image-to-video
+    key_ref: FAL_KEY
+    docs: https://fal.ai/models

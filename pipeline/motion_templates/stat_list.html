@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+  html,body { margin:0; width:100%; height:100%; overflow:hidden; background:#101318;
+              font-family:'Inter','Segoe UI',sans-serif; }
+  .row { position:absolute; left:6vw; right:6vw; display:flex; align-items:center;
+         border-bottom:1px solid #23262c; }
+  .num { width:10vmin; font-size:5.2vmin; font-weight:800; color:#e8c766; }
+  .txt { flex:1; font-size:4.8vmin; color:#d6d8db; font-weight:500;
+         opacity:0; transform:translateX(-4.6vmin); }
+  .bar { position:absolute; left:0; bottom:-1px; height:0.2vmin; background:#e8c766; width:0; }
+</style></head>
+<body>
+<div id="rows"></div>
+<script>
+const ITEMS = {{ITEMS}};             // JSON array of strings
+const D = {{DURATION}};
+const rowsEl = document.getElementById('rows');
+const H = innerHeight, per = H / ITEMS.length;
+ITEMS.forEach((txt, i) => {
+  const r = document.createElement('div');
+  r.className = 'row';
+  r.style.top = (i * per) + 'px';
+  r.style.height = per + 'px';
+  r.innerHTML = `<div class="num">${i + 1}</div><div class="txt">${txt}<div class="bar"></div></div>`;
+  rowsEl.appendChild(r);
+});
+const V = () => Math.min(innerWidth, innerHeight) / 100;
+function renderFrame(t) {
+  const v = V();
+  document.querySelectorAll('.row').forEach((r, i) => {
+    const start = (i / ITEMS.length) * D * 0.7;
+    const local = Math.min(Math.max(t - start, 0) / (D * 0.25), 1);
+    const e = 1 - Math.pow(1 - local, 3);
+    const txt = r.querySelector('.txt');
+    txt.style.opacity = e;
+    txt.style.transform = `translateX(${-4.6 * v * (1 - e)}px)`;
+    const bar = r.querySelector('.bar');
+    bar.style.width = (e * 100) + '%';
+  });
+}
+window.renderFrame = renderFrame;
+</script>
+</body></html>

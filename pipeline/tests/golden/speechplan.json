@@ -1,0 +1,8 @@
+{
+  "provider": "mock",
+  "voice_id": "mock_voice",
+  "model": "mock",
+  "segments": [
+    {"part": 1, "text_with_tags": "[спокойно] Текст первого сегмента озвучки.", "char_count": 42}
+  ]
+}

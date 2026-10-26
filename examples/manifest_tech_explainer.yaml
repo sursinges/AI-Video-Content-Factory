@@ -1,0 +1,15 @@
+# Example Manifest: Tech & Product Explainer (16:9)
+# Ideal for technology overviews, software tutorials, and product explainers.
+run_id: ep-tech-explainer-demo
+channel_id: tech_insights
+topic: "How Large Language Models Actually Process Thoughts"
+format: tech_review
+target_minutes: 2
+language: en
+reference_urls: []
+profile: config/channel.profile.yaml
+overrides:
+  visual:
+    preset: flat_vector_night
+  audio_mix:
+    music_mood: "tech minimal"

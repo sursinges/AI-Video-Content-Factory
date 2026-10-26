@@ -1,0 +1,8 @@
+# Approximate provider prices for pre-run cost estimates (USD).
+# 0 = free/local. Update to match your actual providers.
+llm:
+  usd_per_1m_tokens: 0      # b.ai (owner key) — flat/unmetered
+tts:
+  usd_per_1k_chars: 0       # smallest_ai — check plan; ElevenLabs ~0.15
+image:
+  usd_per_image: 0          # vheer free / local SD

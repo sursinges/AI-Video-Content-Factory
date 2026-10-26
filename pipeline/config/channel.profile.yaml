@@ -1,0 +1,58 @@
+# Channel profile: fills prompt variables and pipeline defaults (S0-08).
+# Language of content is a parameter; UI is RU/EN (techplan principle 9).
+
+channel_id: my_channel
+name: Мой канал
+language: ru
+description: >
+  Атмосферные исторические истории под засыпание и фон.
+
+tone: спокойный, разговорный, интеллигентный
+address: ты
+narrator_person: первое лицо, эпизодически
+final_phrase: Спокойной ночи.
+stop_words:
+  - суета
+  - вдвоём с историей
+palette: ["#1E1A4E", "#E1C049", "#0C0A26"]
+style_preset: flat vector night scene   # референс «Шаги.rar»
+
+voice:
+  provider: null      # chosen in S2
+  voice_id: null
+
+tts:
+  speed: 0.95
+  segment_chars: [200, 500]
+  tag_density: "1 tag per 1-3 sentences"
+  pronunciation_map:          # слово -> как читать (ударения, бренды, аббревиатуры)
+    "замок": "замОк"
+    "SQL": "сиквел"
+  language_map:            # language -> engine override (default: providers.yaml tts)
+    cs: xtts               # chatterbox 0.1.7 has no czech
+    ru: chatterbox
+    en: chatterbox
+
+script:
+  chunk_chars: [6000, 9000]
+  max_critic_iterations: 2  # TUNE-01: fewer critic loops per chunk
+  # Free length: total volume derives from minutes (or this default), not fixed
+  default_target_minutes: 1   # TEMP: 1-min episodes until launch (owner 2026-09-13)
+  chars_per_minute: 1450          # ru speech pace, recalibrate in S2
+  cta_rule: "без CTA в последней фразе; мягкий тематический вопрос аудитории допускается"
+  escalation_principle: "от частного наблюдения к системным следствиям"
+  greeting_formula: "Привет. Ты на канале $channel_name"
+  forbidden_self_names: ["голос выпуска", "голос канала", "диктор"]
+  audience: "обыватели и практики без академического бэкграунда"
+  explanation_style: "простыми словами и наглядными аналогиями"
+
+visual:
+  scene_change_seconds: [30, 60]
+  ken_burns_zoom: [1.0, 1.08]
+  resolution: [1920, 1080]     # final video; generators upscale to this
+  image_size: [1024, 576]      # what we ask the image generator for (16:9)
+
+audio_mix:
+  voice_lufs: -14
+  ambient_db: [-25, -30]
+  fade_sec: 2.5

@@ -1,0 +1,82 @@
+# Video Formats: each format defines visual, audio, pacing, and assembly defaults.
+# Format is selected in the episode manifest; can be overridden by channel profile.
+
+sleep_history:
+  name: "Sleep & Ambient Narrative (Long-form calm stories, 16:9)"
+  visual_preset: dark_history_cinematic
+  tts_speed: 0.9
+  tag_density: "1 tag per 1-3 sentences"
+  scene_change_seconds: [30, 60]
+  effects_density: 0.6          # Camera motion frequency
+  music_mood: "calm ambient night"
+  fade_out_long: true
+
+talking_head:
+  name: "Talking Head & Commentary (~10 min, 16:9)"
+  visual_preset: dark_history_cinematic
+  tts_speed: 1.0
+  tag_density: "none"
+  scene_change_seconds: [8, 15]
+  effects_density: 0.9
+  music_mood: "upbeat documentary"
+  fade_out_long: false
+
+explainer:
+  name: "Explainer & Educational Deep Dive (16:9)"
+  visual_preset: flat_vector_night
+  tts_speed: 1.0
+  tag_density: "1 tag per 2-4 sentences"
+  scene_change_seconds: [6, 12]
+  effects_density: 0.8
+  music_mood: "tech minimal"
+  fade_out_long: false
+
+short_vertical:
+  name: "Short Vertical (YouTube Shorts / Reels / TikTok, 9:16)"
+  visual_preset: flat_vector_night
+  visual:
+    resolution: [1080, 1920]
+    image_size: [576, 1024]
+    aspect_ratio: "9:16"
+  subtitles:
+    burn_in: true
+    style: bold_yellow
+    font_size: 56
+  tts_speed: 1.08
+  tag_density: "none"
+  scene_change_seconds: [3, 7]
+  effects_density: 1.0
+  music_mood: "upbeat documentary"
+  fade_out_long: false
+
+tech_review:
+  name: "Tech & Product Review (16:9)"
+  visual_preset: flat_vector_night
+  visual:
+    resolution: [1920, 1080]
+    image_size: [1024, 576]
+    aspect_ratio: "16:9"
+  subtitles:
+    burn_in: false
+  tts_speed: 1.02
+  tag_density: "none"
+  scene_change_seconds: [5, 10]
+  effects_density: 0.85
+  music_mood: "tech minimal"
+  fade_out_long: false
+
+educational_narrative:
+  name: "Educational Narrative (Documentary & Science, 16:9)"
+  visual_preset: dark_history_cinematic
+  visual:
+    resolution: [1920, 1080]
+    image_size: [1024, 576]
+    aspect_ratio: "16:9"
+  subtitles:
+    burn_in: false
+  tts_speed: 0.98
+  tag_density: "1 tag per 2-3 sentences"
+  scene_change_seconds: [12, 25]
+  effects_density: 0.75
+  music_mood: "calm ambient night"
+  fade_out_long: true

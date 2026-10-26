@@ -1,0 +1,14 @@
+# Example Manifest: Short Vertical Video (9:16)
+# Ideal for YouTube Shorts, Instagram Reels, and TikTok.
+run_id: ep-short-vertical-demo
+channel_id: my_channel
+topic: "3 Mind-Blowing Facts About Deep Ocean Creatures"
+format: short_vertical
+target_minutes: 1
+language: en
+reference_urls: []
+profile: config/channel.profile.yaml
+overrides:
+  subtitles:
+    burn_in: true
+    style: bold_yellow
