@@ -73,15 +73,9 @@ catalog:
     default_model: sonic-2
     key_ref: CARTESIA_API_KEY
     docs: https://cartesia.ai
-  - id: falai
-    name: fal.ai (FLUX image & video models)
-    icon: FA
-    type: image
-    adapter: openai_compatible
-    base_url: https://fal.run
-    default_model: flux/dev
-    key_ref: FAL_KEY
-    docs: https://fal.ai/dashboard/keys
+  # NOTE: the old "falai" image entry (openai_compatible @ fal.run) was removed
+  # — fal.run speaks fal's queue API, not OpenAI-compatible; fal_ai video below
+  # is the correct fal entry.
   - id: youtube_api
     name: YouTube Data API (Publishing & Analytics)
     icon: YT

@@ -198,10 +198,17 @@ class M3Visual(Module):
             return [("visual/world.json", world), ("visual/scenes.json", Scenes(scenes=scenes))]
 
         img_dir = ctx.run_dir / "visual" / "assets"
+        video_mode = vis_cfg.get("video_scenes", "none")  # none | hero | all
+        manual_ids = set(vis_cfg.get("video_scene_ids") or [])
         for i, sc in enumerate(scenes):
             sc.negative = full_negative
             if prompts:
                 sc.prompt = prompts[i]
+            # hero = every 5th scene starting with the opener — deterministic
+            # anchor scenes for image->video without exploding the clip budget
+            if (video_mode == "all" or (video_mode == "hero" and i % 5 == 0)
+                    or sc.id in manual_ids):
+                sc.motion = "video"
             out = img_dir / f"{sc.id}.png"
             res = ctx.router.call("image", {"prompt": sc.prompt, "negative": sc.negative,
                                             "seed": sc.seed, "out_path": str(out),
@@ -209,5 +216,22 @@ class M3Visual(Module):
                                             "height": vis_cfg.get("image_size", [1024, 576])[1]})
             sc.asset = res.get("image_path", str(out))
             sc.status = "done"
+            if sc.motion == "video":
+                # GAP-01: animate the still via the video provider (Kling takes
+                # 5/10 s; M4 pads/trims the clip to the real scene slot)
+                clip_dir = ctx.run_dir / "visual" / "clips"
+                clip = clip_dir / f"{sc.id}.mp4"
+                span = max(sc.end - sc.start, 1.0)
+                clip_dur = 10 if span >= 7.5 else 5
+                try:
+                    vres = ctx.router.call("video", {"image_path": sc.asset,
+                                                     "prompt": sc.prompt,
+                                                     "duration_sec": clip_dur,
+                                                     "out_path": str(clip)})
+                    sc.video_asset = vres.get("video_path", str(clip))
+                    sc.clip_duration_sec = float(vres.get("duration_sec") or clip_dur)
+                except Exception as e:  # noqa: BLE001 — clip optional, still stands
+                    ctx.router.on_event(f"m3_visual video notice ({sc.id}): {e}, keeping still")
+                    sc.motion = "still"
 
         return [("visual/world.json", world), ("visual/scenes.json", Scenes(scenes=scenes))]

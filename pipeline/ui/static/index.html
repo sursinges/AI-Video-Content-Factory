@@ -2035,6 +2035,23 @@ async function newEp() {
             </select>
           </div>
           <div>
+            <select id="p-video" data-ptype="video">
+              <option value="">${t('Видео-сцены')}: (${t('по умолч.')} ${hum(opts.defaults.video||'—')})</option>
+              ${(opts.by_type.video||[]).map(p=>`<option value="${p}">${hum(p)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <div class="lbl">${t('Image→Video (какие сцены оживлять)')}</div>
+            <select id="n-video-scenes">
+              <option value="">${t('Не оживлять (статичные кадры)')}</option>
+              <option value="hero">${t('Hero — каждая 5-я сцена')}</option>
+              <option value="all">${t('Все сцены (дороже)')}</option>
+            </select>
+          </div>
+          <div>
             <select id="p-music" data-ptype="music">
               <option value="">${t('Музыка')}: (${t('по умолч.')} ${hum(opts.defaults.music||'')})</option>
               ${(opts.by_type.music||[]).map(p=>`<option value="${p}">${hum(p)}</option>`).join('')}
@@ -2381,6 +2398,7 @@ async function newEp() {
       visual_preset: card.querySelector('#n-visual-preset').value,
       export_dir: card.querySelector('#n-export-dir').value,
       music_mood: card.querySelector('#n-music-mood').value || undefined,
+      video_scenes: card.querySelector('#n-video-scenes').value || undefined,
       subtitles: card.querySelector('#n-subs').value ? {burn_in: true, style: card.querySelector('#n-subs').value} : undefined,
       provider_overrides: pov,
       model_overrides: mov,

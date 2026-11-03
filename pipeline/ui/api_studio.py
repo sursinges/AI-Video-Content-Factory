@@ -255,7 +255,11 @@ def api_studio_build(body: dict):
                 img = None
         # 3) motion clip (image optional: audio-only scene gets black)
         clip = run_dir / "scenes" / f"s{i:02d}.mp4"
-        if img:
+        if sc.get("video_path") and Path(sc["video_path"]).exists():
+            from core.media import normalize_scene_video
+
+            normalize_scene_video(sc["video_path"], clip, duration=dur)
+        elif img:
             render_scene_clip(img, clip, duration=dur, effect=sc.get("effect") or "zoom_in")
         else:
             ff = __import__("core.media", fromlist=["ff"]).ff

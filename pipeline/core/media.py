@@ -151,6 +151,18 @@ def render_scene_clip(image: str | Path, out: str | Path, duration: float,
         "-c:v", "libx264", "-preset", "fast", "-pix_fmt", "yuv420p", str(out)])
 
 
+def normalize_scene_video(src: str | Path, out: str | Path, duration: float,
+                          fps: int = 25, size: str = "1920x1080"):
+    """Fit a generated image->video clip (fal Kling etc.) into its scene slot:
+    scale/crop to the assembly size, uniform fps, trim to duration or pad by
+    cloning the last frame (Kling gives 5/10 s clips for 30-60 s scenes)."""
+    w, h = size.split("x")
+    vf = (f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},"
+          f"fps={fps},tpad=stop_mode=clone:stop_duration={duration:.2f}")
+    ff(["-i", str(src), "-vf", vf, "-t", f"{duration:.2f}", "-an",
+        "-c:v", "libx264", "-preset", "fast", "-pix_fmt", "yuv420p", str(out)])
+
+
 def ken_burns(image: str | Path, out: str | Path, duration: float, zoom_in: bool = True,
               fps: int = 25, size: str = "1920x1080"):
     """Legacy wrapper for ken_burns: calls render_scene_clip with zoom_in / zoom_out."""

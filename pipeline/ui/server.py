@@ -343,6 +343,8 @@ def api_episode(body: dict, request: Request):
         overrides["music_mood"] = str(body["music_mood"]).strip()
     if isinstance(body.get("subtitles"), dict):
         overrides["subtitles"] = body["subtitles"]
+    if body.get("video_scenes"):  # GAP-01: none (default) | hero | all
+        overrides.setdefault("visual", {})["video_scenes"] = str(body["video_scenes"]).strip()
     # draft preview (P5): script + scene plan WITHOUT synthesis/render — the
     # user reviews it, then POST /api/run/{id}/render re-runs m2/m3 for real
     until_step = None

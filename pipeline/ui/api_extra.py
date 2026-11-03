@@ -790,6 +790,7 @@ def api_run_modify_scene(run_id: str, body: dict):
         AVAILABLE_SCENE_EFFECTS,
         mix_and_master,
         mux,
+        normalize_scene_video,
         render_scene_clip,
         xfade_chain,
     )
@@ -816,6 +817,32 @@ def api_run_modify_scene(run_id: str, body: dict):
         sc["asset"] = str(p)
     elif aspect == "text":
         sc["text"] = str(new_value)
+    elif aspect == "motion":  # GAP-01: animate this scene via the video provider
+        want = str(new_value or "video").strip() or "video"
+        if want == "still":
+            sc["video_asset"] = None
+            sc["motion"] = "still"
+        else:
+            asset_p = Path(str(sc.get("asset") or ""))
+            if not asset_p.exists():
+                return JSONResponse({"error": "scene has no still image to animate"}, status_code=400)
+            provs = yaml.safe_load((config_root() / "providers.yaml").read_text(encoding="utf-8"))
+            from core.providers import router as router_mod
+            from core.state import StateDB
+
+            load_env_ctx()
+            st = StateDB(data_root() / "state.db")
+            try:
+                router = router_mod.Router(provs, st, run_id, rd)
+                clip = rd / "visual" / "clips" / f"{sc['id']}.mp4"
+                span = max(float(sc.get("end", 0)) - float(sc.get("start", 0)), 1.0)
+                vres = router.call("video", {"image_path": sc["asset"], "prompt": sc.get("prompt", ""),
+                                             "duration_sec": 10 if span >= 7.5 else 5,
+                                             "out_path": str(clip)})
+                sc["video_asset"] = vres.get("video_path", str(clip))
+                sc["motion"] = "video"
+            finally:
+                st.close()
     elif aspect == "image":
         prompt = str(new_value) if new_value else sc.get("prompt", "")
         preset = _load_visual_preset("dark_history_cinematic")
@@ -848,7 +875,10 @@ def api_run_modify_scene(run_id: str, body: dict):
 
     # Re-render ONLY this single scene clip
     clip_mp4 = work_dir / f"scene_{scene_idx:03d}.mp4"
-    render_scene_clip(sc["asset"], clip_mp4, duration=durations[scene_idx], effect=sc["effect"], size="1920x1080")
+    if sc.get("video_asset") and Path(sc["video_asset"]).exists():
+        normalize_scene_video(sc["video_asset"], clip_mp4, duration=durations[scene_idx], size="1920x1080")
+    else:
+        render_scene_clip(sc["asset"], clip_mp4, duration=durations[scene_idx], effect=sc["effect"], size="1920x1080")
 
     # Fast re-assembly via xfade
     scene_files = [work_dir / f"scene_{i:03d}.mp4" for i in range(len(scenes))]
