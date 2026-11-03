@@ -16,6 +16,7 @@ from fastapi import Request
 from starlette.responses import JSONResponse
 
 import ui.server as srv
+from core import edition as edition_mod
 from core import tenants
 from ui.server import app
 
@@ -63,7 +64,8 @@ async def _json_body(request: Request) -> dict:
 @app.get("/api/auth/me")
 def api_auth_me(request: Request):
     user = getattr(request.state, "tenant_user", None)
-    return {"hosted_mode": tenants.hosted_mode(srv.WORKSPACE),
+    return {"edition": edition_mod.current(srv.WORKSPACE),
+            "hosted_mode": tenants.hosted_mode(srv.WORKSPACE),
             "registration_open": tenants.registration_open(srv.WORKSPACE),
             "user": user}
 

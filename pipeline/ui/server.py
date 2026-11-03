@@ -221,6 +221,7 @@ async def _tenant_middleware(request: Request, call_next):
             path = request.url.path
             if not owner_token:
                 gated = (path.startswith("/api/") and not path.startswith("/api/auth/")
+                         and not path.startswith("/api/edition")
                          and not path.startswith("/api/health")) or path.startswith("/files/")
                 if gated:
                     return JSONResponse({"error": "auth required", "auth": True}, status_code=401)
@@ -1057,6 +1058,17 @@ def api_modules():
 def api_health():
     """Public health probe for uptime monitors (reveals nothing about data)."""
     return {"ok": True, "uptime_boot": BOOT_ID}
+
+
+@app.get("/api/edition")
+def api_edition():
+    """Which edition is running (desktop|web) + whether the sign-in gate is
+    armed. Public so the UI can render before authentication."""
+    from core import edition
+
+    return {"edition": edition.current(WORKSPACE),
+            "hosted_mode": tenants.hosted_mode(WORKSPACE),
+            "registration_open": tenants.registration_open(WORKSPACE)}
 
 
 @app.get("/")

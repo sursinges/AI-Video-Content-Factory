@@ -3871,12 +3871,23 @@ async function show(name, force) {
 })();
 
 (async function boot(){
+  const ed = await api('/api/edition');
+  S.edition = ed || {edition: 'desktop', hosted_mode: false};
   const me = await api('/api/auth/me');
   S.me = me || {hosted_mode: false, user: null};
   if (S.me.hosted_mode && !S.me.user) { renderAuthGate(); return; }
   if (S.me.user) renderUserBadge(S.me.user);
+  renderEditionBadge();
   show('home');
 })();
+
+function renderEditionBadge(){
+  const foot = document.querySelector('.side-foot');
+  if (!foot) return;
+  const isWeb = (S.edition || {}).edition === 'web';
+  foot.innerHTML = '<span class="dot"></span>' +
+    (isWeb ? 'CLOUD edition' : 'DESKTOP edition') + ' · v0.4';
+}
 
 function renderUserBadge(u){
   const foot = document.querySelector('.side-foot.lang-foot');

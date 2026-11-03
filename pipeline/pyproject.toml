@@ -16,10 +16,18 @@ dependencies = [
     "fastapi>=0.110,<1",
     "uvicorn>=0.29,<1",
     "yt-dlp>=2025.1,<2027",
+    "soundfile>=0.12,<1",
     "transformers==4.55.2",  # pin: coqui-tts needs isin_mps_friendly; newer drops it
 ]
 
 [project.optional-dependencies]
+# Editions (docs/EDITIONS.md): web needs nothing beyond the base deps —
+# queue/tenants/credits are stdlib+fastapi. desktop pulls the local GPU stack.
+desktop = [
+    "torch>=2.1",
+    "diffusers>=0.31,<1",
+    "faster-whisper>=1.0,<2",
+]
 dev = ["pytest>=8,<9"]
 secrets = ["keyring>=25,<26"]
 whisper = ["faster-whisper>=1.0,<2"]

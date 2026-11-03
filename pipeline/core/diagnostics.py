@@ -243,8 +243,30 @@ def check_api_keys(workspace: Path) -> dict[str, Any]:
         }
 
 
+def check_edition(workspace: Path) -> dict[str, Any]:
+    """Which edition is running (desktop|web) and what that implies (P-split)."""
+    from core import edition as edition_mod
+    from core import tenants
+
+    ed = edition_mod.current(workspace)
+    hosted = tenants.hosted_mode(workspace)
+    if ed == "desktop":
+        msg = "Desktop (Community) edition: single owner, no sign-in/credits; local GPU providers available."
+    else:
+        msg = ("Web (Cloud) edition: " + ("sign-in gate ARMED (hosted_mode)." if hosted
+                                          else "sign-in gate not armed — set hosted_mode: true in ui_settings.yaml."))
+    return {
+        "name": "Edition",
+        "status": "ok",
+        "version": ed,
+        "detail": f"edition={ed}, hosted_mode={hosted}",
+        "message": msg,
+    }
+
+
 def run_diagnostics(workspace: Path) -> dict[str, Any]:
     checks = [
+        check_edition(workspace),
         check_python(),
         check_ffmpeg(),
         check_cuda_gpu(),

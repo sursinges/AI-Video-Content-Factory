@@ -58,7 +58,7 @@ flowchart LR
 
 ---
 
-## 4. Supported Genres & Formats
+## 4. Formats
 
 The factory does not hardcode content styles; it parameterizes them via `config/formats.yaml` and channel profiles:
 
@@ -92,7 +92,24 @@ The factory does not hardcode content styles; it parameterizes them via `config/
 
 ---
 
-## 6. System Requirements
+## 6. Editions: Desktop & Web (Cloud)
+
+One codebase, two editions (details in [`pipeline/docs/EDITIONS.md`](pipeline/docs/EDITIONS.md)):
+
+| | **Desktop** (Community, default) | **Web** (Cloud) |
+|---|---|---|
+| Users | single owner, no sign-in | multi-tenant, sign-in gate |
+| Data | global workspace | per-tenant data roots + per-tenant BYOK |
+| Billing | — | credits per run, auto-refund on failure |
+| Queue / quotas | — | run queue, disk quotas |
+| Local GPU models (SD / whisper / TTS clones) | first-class (`pip install pipeline[desktop]`) | optional, never assumed |
+| Install | `pip install pipeline[desktop]` → `pipeline ui` | base deps + `edition: web`, `hosted_mode: true` in `config/ui_settings.yaml` |
+
+The edition is detected from `PIPELINE_EDITION` env → `ui_settings.yaml` → default **desktop**; `pipeline doctor` reports it.
+
+---
+
+## 7. System Requirements
 
 ### Minimum (Cloud / API Mode)
 - **OS:** Windows 10/11, Ubuntu 22.04+, or macOS
@@ -108,7 +125,7 @@ The factory does not hardcode content styles; it parameterizes them via `config/
 
 ---
 
-## 7. Step-by-Step Installation
+## 8. Step-by-Step Installation
 
 ### Step 1: Clone the repository
 ```bash
@@ -144,7 +161,7 @@ pip install -e pipeline
 
 ---
 
-## 8. First Run & Health Check
+## 9. First Run & Health Check
 
 ### 1. Run the system diagnostics
 The built-in `doctor` command verifies your Python version, FFmpeg binaries, GPU status, disk capacity, and configuration health:
@@ -173,7 +190,7 @@ Open your browser at **`http://localhost:8765`**.
 
 ---
 
-## 9. Configuration & BYOK Setup
+## 10. Configuration & BYOK Setup
 
 Copy the environment template to activate external API providers:
 ```bash
@@ -206,7 +223,7 @@ defaults:
 
 ---
 
-## 10. Output Artifacts & Resuming Runs
+## 11. Output Artifacts & Resuming Runs
 
 All generated assets are stored under `pipeline/runs/<run_id>/`:
 ```
@@ -240,7 +257,7 @@ The orchestrator skips already completed stages and resumes from the exact point
 
 ---
 
-## 11. Troubleshooting Common Issues
+## 12. Troubleshooting Common Issues
 
 | Symptom | Cause | Solution |
 |---|---|---|
@@ -251,7 +268,7 @@ The orchestrator skips already completed stages and resumes from the exact point
 
 ---
 
-## 12. Project Status & Roadmap
+## 13. Project Status & Roadmap
 
 - [x] **Core Pipeline (S0–S4):** Deterministic contracts, audio synthesis, visual direction, FFmpeg montage.
 - [x] **Metadata & Packaging (S5):** YouTube chapters, SEO descriptions, cover studio.
@@ -264,9 +281,10 @@ The orchestrator skips already completed stages and resumes from the exact point
 
 ---
 
-## 13. Documentation & Links
+## 14. Documentation & Links
 
 - **Project Structure & Components:** [`pipeline/docs/PROJECT_STRUCTURE.md`](pipeline/docs/PROJECT_STRUCTURE.md)
+- **Editions (Desktop / Web):** [`pipeline/docs/EDITIONS.md`](pipeline/docs/EDITIONS.md)
 - **Developer Recipes & Extensions:** [`pipeline/docs/RECIPES.md`](pipeline/docs/RECIPES.md)
 - **Voice Guide & TTS Setup:** [`pipeline/docs/VOICE_GUIDE.md`](pipeline/docs/VOICE_GUIDE.md)
 - **Community Plugins System:** [`pipeline/docs/COMMUNITY_PLUGINS.md`](pipeline/docs/COMMUNITY_PLUGINS.md)
@@ -274,7 +292,7 @@ The orchestrator skips already completed stages and resumes from the exact point
 
 ---
 
-## 14. License
+## 15. License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 Components that link to third-party models (e.g., Silero, Coqui XTTS, Stable Diffusion) adhere to their respective upstream licenses.

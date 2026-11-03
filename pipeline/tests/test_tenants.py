@@ -17,7 +17,7 @@ def hosted_ws(tmp_path, monkeypatch):
     (tmp_path / "config").mkdir()
     (tmp_path / "data").mkdir()
     (tmp_path / "config" / "ui_settings.yaml").write_text(
-        "hosted_mode: true\nregistration_open: true\n", encoding="utf-8")
+        "edition: web\nhosted_mode: true\nregistration_open: true\n", encoding="utf-8")
     (tmp_path / "config" / "providers.yaml").write_text(
         "defaults:\n  llm: mock\n  tts: mock_tts\n"
         "providers:\n  mock:\n    type: llm\n    adapter: mock\n"

@@ -124,6 +124,13 @@ def _ui_settings_path(workspace: str | Path) -> Path:
 
 
 def read_flags(workspace: str | Path) -> dict:
+    from core import edition
+
+    if edition.is_desktop(workspace):
+        # Desktop (Community) edition: the hosted/tenant machinery is
+        # structurally off — no sign-in, no credits, no queue, regardless
+        # of what ui_settings.yaml carries.
+        return {"hosted_mode": False, "registration_open": False}
     try:
         import yaml
 
