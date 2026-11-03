@@ -2059,6 +2059,11 @@ async function newEp() {
           </div>
         </div>
 
+        <div class="lbl">${t('Референсы стиля (подставляются в генерацию)')}
+          <span class="info-tip" data-tip="${t('Выбранные референсы копируются в выпуск: стиль описывается в промптах сцен, первая картинка становится основой img2img для локального SD. Загрузить новые — в Библиотеке → Референсы.')}">?</span>
+        </div>
+        <select id="n-refs" multiple size="4" style="width:100%"></select>
+
         <div class="row2">
           <div>
             <div class="lbl">${t('Эмбиент (mood)')}</div>
@@ -2399,6 +2404,7 @@ async function newEp() {
       export_dir: card.querySelector('#n-export-dir').value,
       music_mood: card.querySelector('#n-music-mood').value || undefined,
       video_scenes: card.querySelector('#n-video-scenes').value || undefined,
+      reference_urls: refsSel ? Array.from(refsSel.selectedOptions).map(o => o.value).filter(Boolean) : undefined,
       subtitles: card.querySelector('#n-subs').value ? {burn_in: true, style: card.querySelector('#n-subs').value} : undefined,
       provider_overrides: pov,
       model_overrides: mov,
@@ -2406,6 +2412,16 @@ async function newEp() {
   }
   let voiceCache = {voices: []};
   api('/api/voices').then(v => { voiceCache = v; });
+  // UI-15: references attached to the episode participate in generation
+  const refsSel = card.querySelector('#n-refs');
+  if (refsSel) api('/api/state').then(st => {
+    (st.references || []).forEach(r => {
+      const o = document.createElement('option');
+      o.value = r.path || '';
+      o.textContent = '[' + (r.kind || 'ref') + '] ' + (r.path || '').slice(-48) + (r.notes ? ' — ' + r.notes.slice(0, 30) : '');
+      refsSel.appendChild(o);
+    });
+  });
 
   async function launchEpisode(draft) {
     const btn = draft ? card.querySelector('#n-draft') : card.querySelector('#n-go');
@@ -2639,7 +2655,7 @@ async function lib() {
   // References
   const rc = el(`<div class="card">
     <h3>${t('lib.refs')}</h3>
-    <div class="hint">${t('Референсы — это образцы стиля, которые ты загружаешь сам: картинка, видео или ссылка. Они НЕ подставляются в генерацию автоматически — держи их перед глазами, когда пишешь промпты и выбираешь визуальный пресет. Здесь появляются только те, что добавил ты.')}</div>
+    <div class="hint">${t('Референсы — это образцы стиля, которые ты загружаешь сам: картинка, видео или ссылка. Прикрепи их к выпуску в форме запуска («Референсы стиля») — они попадут в генерацию: стиль уйдёт в промпты сцен, первая картинка станет основой img2img для локального SD. Здесь появляются только те, что добавил ты.')}</div>
     <div class="drop-zone" id="rf-drop">${t('Перетащи файл сюда или нажми, чтобы выбрать (картинка / видео / текст)')}</div>
     <input type="file" id="rf-file" style="display:none">
     <div class="row2">

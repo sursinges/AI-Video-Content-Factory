@@ -3,11 +3,59 @@ Scene boundaries are computed deterministically from subtitle timings; the
 LLM only writes per-scene prompts (times from an LLM are not trusted)."""
 
 import json
+import shutil
 import zlib
+from pathlib import Path
 
 from core.contracts import Scene, Scenes, WorldContext
 from modules.base import Artifact, Module, RunContext
 from modules.m1_script.prompts import extract_json, render
+
+_IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+
+
+def _collect_references(ctx) -> list[dict]:
+    """UI-15: copy manifest reference files into visual/refs/ (run becomes
+    self-contained, router cache stays stable) and return descriptors used
+    for prompt enrichment + img2img. Missing/unfetchable refs are skipped."""
+    ref_clauses: list[dict] = []
+    refs_dir = ctx.run_dir / "visual" / "refs"
+    for i, ref in enumerate(getattr(ctx.manifest, "reference_urls", None) or []):
+        src = str(ref).strip()
+        if not src:
+            continue
+        dest: "Path | None" = None
+        if src.startswith(("http://", "https://")):
+            try:
+                import httpx
+
+                suffix = Path(src.split("?")[0]).suffix or ".jpg"
+                dest = refs_dir / f"ref_{i + 1:02d}{suffix}"
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with httpx.Client(timeout=30, follow_redirects=True) as cl:
+                    r = cl.get(src)
+                    r.raise_for_status()
+                    dest.write_bytes(r.content[:50 * 1024 * 1024])
+            except Exception as e:  # noqa: BLE001 — ref is optional input
+                ctx.router.on_event(f"m3_visual reference notice: cannot fetch {src}: {e}")
+                continue
+        else:
+            p = Path(src)
+            if not p.is_absolute():
+                p = (ctx.data_root or ctx.workspace) / p
+            if p.exists():
+                dest = refs_dir / f"ref_{i + 1:02d}{p.suffix or '.jpg'}"
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(p, dest)
+            else:
+                ctx.router.on_event(f"m3_visual reference notice: missing {src}, skipped")
+                continue
+        ref_clauses.append({
+            "file": dest.name,
+            "path": str(dest),
+            "kind": "image" if dest.suffix.lower() in _IMAGE_SUFFIXES else "other",
+        })
+    return ref_clauses
 
 
 def _summary_from_script(ctx) -> str:
@@ -127,6 +175,11 @@ class M3Visual(Module):
         style = preset.get("style_prompt") or vis_cfg.get("style_preset", "dark historical documentary, authentic archival atmosphere")
         neg_preset = preset.get("negative_prompt", "cartoon, 3d render, anime, vibrant colors, neon, text, watermark")
 
+        # UI-15: attached references now participate in generation
+        refs = _collect_references(ctx)
+        ref_image = next((r["path"] for r in refs if r["kind"] == "image"), None)
+        refs_block = "\n".join(f"- {r['file']} ({r['kind']})" for r in refs) or "нет"
+
         # 1) world context (LLM; deterministic mock in dry-run)
         if ctx.dry_run:
             world = WorldContext(era="MOCK ERA", palette=["#1E1A4E", "#E1C049", "#0C0A26"],
@@ -177,6 +230,7 @@ class M3Visual(Module):
                             "light": world.light,
                             "forbidden": ", ".join(world.forbidden),
                             "language": ctx.manifest.language,
+                            "references": refs_block,
                             "scenes_text": "\n".join(f"{sid}: {t}" for sid, t in zip(block_ids, block)),
                         }), "temperature": 0.7})
                         data = extract_json(resp.get("text", "")) or {}
@@ -210,10 +264,13 @@ class M3Visual(Module):
                     or sc.id in manual_ids):
                 sc.motion = "video"
             out = img_dir / f"{sc.id}.png"
-            res = ctx.router.call("image", {"prompt": sc.prompt, "negative": sc.negative,
-                                            "seed": sc.seed, "out_path": str(out),
-                                            "width": vis_cfg.get("image_size", [1024, 576])[0],
-                                            "height": vis_cfg.get("image_size", [1024, 576])[1]})
+            img_payload = {"prompt": sc.prompt, "negative": sc.negative,
+                           "seed": sc.seed, "out_path": str(out),
+                           "width": vis_cfg.get("image_size", [1024, 576])[0],
+                           "height": vis_cfg.get("image_size", [1024, 576])[1]}
+            if ref_image:  # providers without img2img simply ignore the key
+                img_payload["init_image"] = ref_image
+            res = ctx.router.call("image", img_payload)
             sc.asset = res.get("image_path", str(out))
             sc.status = "done"
             if sc.motion == "video":
