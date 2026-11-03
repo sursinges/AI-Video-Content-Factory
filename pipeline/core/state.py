@@ -36,6 +36,15 @@ CREATE TABLE IF NOT EXISTS usage (
     tokens INTEGER NOT NULL DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS worker_jobs (
+    run_id TEXT PRIMARY KEY REFERENCES runs(run_id),
+    worker_id TEXT,
+    status TEXT NOT NULL DEFAULT 'queued',
+    claimed_at TEXT,
+    lease_expires_at TEXT,
+    error TEXT,
+    updated_at TEXT DEFAULT (datetime('now'))
+);
 """
 
 LIBRARY_SCHEMA = """
@@ -141,6 +150,65 @@ class StateDB:
 
     def list_runs(self) -> list[sqlite3.Row]:
         return self.conn.execute("SELECT * FROM runs ORDER BY created_at DESC").fetchall()
+
+    # worker jobs (Hybrid Workers, docs/RFC_HYBRID_WORKERS.md) -----------------
+    WORKER_LEASE_MIN = 30
+
+    def enqueue_worker_job(self, run_id: str):
+        self.conn.execute(
+            "INSERT OR IGNORE INTO worker_jobs(run_id, status) VALUES (?, 'queued')",
+            (run_id,))
+        self.conn.commit()
+
+    def claim_next_worker_job(self, worker_id: str, lease_minutes: int | None = None) -> sqlite3.Row | None:
+        """Oldest queued job (or one whose lease expired) -> claimed by worker.
+        Transactional: concurrent claimers never get the same run."""
+        lease = lease_minutes or self.WORKER_LEASE_MIN
+        cur = self.conn.cursor()
+        try:
+            cur.execute("BEGIN IMMEDIATE")
+            row = cur.execute(
+                "SELECT run_id FROM worker_jobs "
+                "WHERE status='queued' OR (status IN ('claimed','running') "
+                "  AND lease_expires_at < datetime('now')) "
+                "ORDER BY updated_at LIMIT 1").fetchone()
+            if not row:
+                cur.execute("ROLLBACK")
+                return None
+            run_id = row["run_id"]
+            cur.execute(
+                "UPDATE worker_jobs SET worker_id=?, status='claimed', "
+                "claimed_at=datetime('now'), lease_expires_at=datetime('now', ?), "
+                "error=NULL, updated_at=datetime('now') WHERE run_id=?",
+                (worker_id, f"+{lease} minutes", run_id))
+            cur.execute("UPDATE runs SET status='running' WHERE run_id=?", (run_id,))
+            self.conn.commit()
+            return self.conn.execute(
+                "SELECT * FROM worker_jobs WHERE run_id=?", (run_id,)).fetchone()
+        except Exception:
+            cur.execute("ROLLBACK")
+            raise
+
+    def renew_worker_lease(self, run_id: str, worker_id: str,
+                           minutes: int | None = None) -> bool:
+        lease = minutes or self.WORKER_LEASE_MIN
+        cur = self.conn.execute(
+            "UPDATE worker_jobs SET lease_expires_at=datetime('now', ?), "
+            "status='running', updated_at=datetime('now') "
+            "WHERE run_id=? AND worker_id=? AND status IN ('claimed','running')",
+            (f"+{lease} minutes", run_id, worker_id))
+        self.conn.commit()
+        return cur.rowcount > 0
+
+    def finish_worker_job(self, run_id: str, worker_id: str, status: str, error: str | None = None):
+        self.conn.execute(
+            "UPDATE worker_jobs SET status=?, error=?, updated_at=datetime('now') "
+            "WHERE run_id=? AND worker_id=?",
+            (status, error, run_id, worker_id))
+        self.conn.commit()
+
+    def list_worker_jobs(self) -> list[sqlite3.Row]:
+        return self.conn.execute("SELECT * FROM worker_jobs ORDER BY updated_at DESC").fetchall()
 
     # cache ------------------------------------------------------------------
     def cache_get(self, key: str) -> str | None:

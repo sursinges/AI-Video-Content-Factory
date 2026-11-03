@@ -138,6 +138,15 @@ def _tenant_env() -> dict:
     return env
 
 
+def _workers_enabled() -> bool:
+    """Hybrid Workers routing flag (Web edition): ui_settings.yaml workers_enabled."""
+    try:
+        data = yaml.safe_load((Path(WORKSPACE) / "config" / "ui_settings.yaml").read_text(encoding="utf-8")) or {}
+        return bool(data.get("workers_enabled", False))
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def _request_user(request: Request) -> dict | None:
     return getattr(request.state, "tenant_user", None)
 
@@ -222,6 +231,7 @@ async def _tenant_middleware(request: Request, call_next):
             if not owner_token:
                 gated = (path.startswith("/api/") and not path.startswith("/api/auth/")
                          and not path.startswith("/api/edition")
+                         and not path.startswith("/api/worker/")
                          and not path.startswith("/api/health")) or path.startswith("/files/")
                 if gated:
                     return JSONResponse({"error": "auth required", "auth": True}, status_code=401)
@@ -379,6 +389,18 @@ def api_episode(body: dict, request: Request):
     run_cmd = [str(PY), "-u", "-m", "core.cli", "run", str(path)] \
         + (["--until", until_step] if until_step else [])
     if tenants.hosted_mode(WORKSPACE) and user:
+        # Hybrid Workers (docs/RFC_HYBRID_WORKERS.md): route into the durable
+        # worker queue instead of a host-local subprocess (Phase 1).
+        if _workers_enabled():
+            st = _state()
+            try:
+                st.create_run(run_id, manifest)
+                st.set_run_status(run_id, "queued")
+                st.enqueue_worker_job(run_id)
+            finally:
+                st.close()
+            return {"run_id": run_id, "queued": True, "worker": True,
+                    "draft": bool(body.get("draft"))}
         # P5-03: hosted launches go through the queue (host-wide slot limit)
         with _queue_lock:
             _run_queue.append({"run_id": run_id, "manifest_path": str(path),
@@ -845,6 +867,9 @@ def api_env_save(body: dict):
 
 # --- extra API (library CRUD, batch, digest, provider test, budget) ---
 from ui import api_extra  # noqa: E402  (needs app/symbols defined above)
+
+# --- Hybrid Workers (RFC_HYBRID_WORKERS.md): token-authed claim/report API ---
+from ui import api_worker  # noqa: E402  (needs app/symbols defined above)
 
 # --- remote browser (phone control): CDP screencast -> websocket -------------
 
