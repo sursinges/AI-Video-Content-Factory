@@ -86,7 +86,7 @@ def api_voices_preview(body: dict, request: "Request" = None):
         return JSONResponse({"error": "voice cloning is coming soon (hosted)", "soon": True}, status_code=403)
     voice = next((v for v in _voices()["voices"] if v["id"] == body.get("id")), None)
     if not voice:
-        return JSONResponse({"error": "голос не найден"}, status_code=404)
+        return JSONResponse({"error": "voice not found"}, status_code=404)
     st = _state()
     provs = yaml.safe_load((config_root() / "providers.yaml").read_text(encoding="utf-8"))
     from core.providers import router as router_mod
@@ -96,11 +96,11 @@ def api_voices_preview(body: dict, request: "Request" = None):
     engine = registry.get("tts/" + voice.get("engine", "f5_ru"))
     if engine is None:
         st.close()
-        return JSONResponse({"error": "движок " + voice.get("engine", "") + " не настроен"}, status_code=400)
+        return JSONResponse({"error": "engine " + voice.get("engine", "") + " is not configured"}, status_code=400)
     out = runs_root() / "_voices" / f"{voice['id']}.mp3"
     try:
         engine.execute({
-            "text": body.get("text") or "Привет. Так звучит мой клонированный голос в пайплайне.",
+            "text": body.get("text") or "Hello. This is my cloned voice in the pipeline.",
             "out_path": str(out), "language": body.get("language", "ru"),
             "ref_audio": voice["ref_audio"], "ref_text": voice["ref_text"]})
         st.close()
@@ -118,13 +118,13 @@ def api_upload_asset(body: dict):
     name = (body.get("name") or "asset.bin").strip()
     safe = "".join(c for c in name if c.isalnum() or c in "._- ") or "asset"
     if not b64:
-        return JSONResponse({"error": "пустой файл"}, status_code=400)
+        return JSONResponse({"error": "empty file"}, status_code=400)
     try:
         raw = base64.b64decode(b64.split(",")[-1], validate=False)
     except Exception:
-        return JSONResponse({"error": "невалидные данные файла"}, status_code=400)
+        return JSONResponse({"error": "invalid file data"}, status_code=400)
     if len(raw) > 25 * 1024 * 1024:
-        return JSONResponse({"error": "файл больше 25 МБ"}, status_code=400)
+        return JSONResponse({"error": "file exceeds 25 MB"}, status_code=400)
     from ui.server import _tenant_over_quota
     if _tenant_over_quota():
         return JSONResponse({"error": "disk quota exceeded — contact the administrator"}, status_code=507)
@@ -150,7 +150,7 @@ def api_formats_save(body: dict):
     key = (body.get("key") or "").strip().replace(" ", "_")
     preset = body.get("preset")
     if not key or not isinstance(preset, dict):
-        return JSONResponse({"error": "нужны key и preset"}, status_code=400)
+        return JSONResponse({"error": "key and preset are required"}, status_code=400)
     fpath = config_root() / "formats.yaml"
     from ui.server import _backup
 
@@ -202,7 +202,7 @@ def api_studio_build(body: dict):
     we TTS each, generate images where asked, render motion, concat, mux."""
     scenes = body.get("scenes") or []
     if not scenes:
-        return JSONResponse({"error": "пустой список сцен"}, status_code=400)
+        return JSONResponse({"error": "empty scene list"}, status_code=400)
     num = 1
     for p in (runs_root()).glob("studio-*.manifest.yaml"):
         try:

@@ -150,7 +150,7 @@ async def api_admin_credits(request: Request):
         return JSONResponse({"error": "bad amount"}, status_code=400)
     user = tenants.add_credits(srv.WORKSPACE, str(body.get("uid") or ""), amount)
     if not user:
-        return JSONResponse({"error": "нет такого пользователя"}, status_code=404)
+        return JSONResponse({"error": "user not found"}, status_code=404)
     return {"ok": True, "user": user}
 
 
@@ -164,7 +164,7 @@ async def api_admin_set_flag(request: Request):
         return JSONResponse({"error": "bad field"}, status_code=400)
     user = tenants.set_user_flag(srv.WORKSPACE, str(body.get("uid") or ""), field, body.get("value"))
     if not user:
-        return JSONResponse({"error": "нет такого пользователя"}, status_code=404)
+        return JSONResponse({"error": "user not found"}, status_code=404)
     return {"ok": True, "user": user}
 
 
