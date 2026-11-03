@@ -1,5 +1,5 @@
 [Unit]
-Description=pipeline — AI video production host
+Description=pipeline — AI video production host (Web edition)
 After=network-online.target
 Wants=network-online.target
 
@@ -11,8 +11,10 @@ ExecStart=__TARGET__/.venv/bin/python -c "from ui.server import main; main(port=
 Restart=always
 RestartSec=5
 Environment=PYTHONUNBUFFERED=1
+Environment=PIPELINE_EDITION=web
 # Tenants data root is resolved per request; nothing secret here.
 # UI_TOKEN=... (optional, in config/ui_settings.yaml or .env)
+# WORKER_TOKEN=... (only if Hybrid Workers are enabled; docs/RFC_HYBRID_WORKERS.md)
 
 [Install]
 WantedBy=multi-user.target

@@ -36,7 +36,19 @@ whisper = ["faster-whisper>=1.0,<2"]
 pipeline = "core.cli:app"
 
 [tool.setuptools.packages.find]
-include = ["core*", "modules*", "ui*"]
+include = [
+    "core*", "modules*", "ui*",
+    # runtime data dirs shipped as namespace packages (wheel must be runnable)
+    "config*", "prompts*", "motion_templates*", "notes*", "tools*",
+]
+
+[tool.setuptools.package-data]
+"ui" = ["static/*.html"]
+"config" = ["*.yaml", "*.md"]
+"prompts" = ["*.md"]
+"motion_templates" = ["*.html"]
+"notes" = ["legal/*.md", "*.md"]
+"tools" = ["*.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

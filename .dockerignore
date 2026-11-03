@@ -1,0 +1,43 @@
+# VCS / local tooling
+.git
+.gitignore
+.zcode
+.idea
+.vscode
+
+# Python artifacts
+**/__pycache__
+**/.venv
+.venv
+venv
+*.py[cod]
+*.egg-info
+dist
+build
+.pytest_cache
+
+# Runtime data (mount volumes instead)
+pipeline/data
+pipeline/runs
+pipeline/models
+pipeline/backups
+pipeline/tmp_probe
+pipeline/grey_plugins
+
+# Local-only configs & secrets (never bake into an image)
+pipeline/.env
+.env
+pipeline/config/ui_settings.yaml
+pipeline/config/providers.yaml.bak
+client_secret*.json
+
+# Generated media
+*.mp4
+*.m4a
+*.wav
+*.mp3
+
+# Owner's private materials (never in images)
+все материалы
+Dockerfile
+.dockerignore
