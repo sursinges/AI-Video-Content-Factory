@@ -1,26 +1,39 @@
-# Terms of Service Template
+# Пользовательское соглашение (Terms of Service)
 
-_Effective date: [DATE]. Service Operator: [OPERATOR / ENTITY, CONTACTS]._
+> ⚠️ **ЧЕРНОВИК ДЛЯ ХОСТЕД-РЕЖИМА**: текст подготовлен для запуска hosted-версии, но перед публикацией владелец обязан заменить метки в квадратных скобках и иметь текст проверенным юристом. До этого hosted_mode включать не следует.
 
-## 1. Scope of Service
-[HOST NAME] provides access to an automated video production web platform ("Service"). The Service enables script authoring, voiceover synthesis, image generation, and video montage. Users remain exclusively responsible for uploaded media and the publication of generated content.
+_Дата вступления в силу: [ДАТА]. Оператор сервиса: [ВЛАДЕЛЕЦ / НАЗВАНИЕ ЮРЛИЦА ИЛИ ИП], контакты: [EMAIL]._
 
-## 2. Account Registration
-- Users must provide a valid email and maintain password confidentiality.
-- One account per user; credential sharing is prohibited.
-- Accounts violating terms or intellectual property rights may be suspended.
+## 1. Предмет соглашения
 
-## 3. Credits & Paid Features
-- Processing jobs deduct credits. Credit is charged upon conveyor job start.
-- If a technical failure prevents episode assembly, credits are automatically refunded.
-- Pricing and refund policies: [REFUND POLICY / LINK].
+[ВЛАДЕЛЕЦ] предоставляет доступ к веб-платформе автоматизированного производства видео («Сервис»). Сервис обеспечивает подготовку сценария, синтез озвучки, генерацию изображений и видеомонтаж. Пользователь несёт исключительную ответственность за загруженные материалы и за публикацию сгенерированного контента на сторонних платформах (включая YouTube).
 
-## 4. Content & Intellectual Property
-- Users warrant that they own or license all uploaded media assets (scripts, images, audio samples).
-- Voice cloning: Users confirm that voice samples are their own or that explicit authorization has been granted. Unauthorized cloning is prohibited.
+## 2. Регистрация и аккаунт
 
-## 5. Prohibited Conduct
-Illegal content, defamation, impersonation for deceptive purposes, spam, automated rate-limit abuse, and copyright infringement are strictly prohibited.
+- Для регистрации требуется действующий адрес электронной почты; пользователь обязан сохранять конфиденциальность пароля.
+- Одна учётная запись на пользователя; передача учётных данных третьим лицам запрещена.
+- Аккаунты, нарушающие настоящее соглашение или права третьих лиц, могут быть приостановлены.
 
-## 6. Disclaimer of Warranties
-The Service is provided "as is". Generated outputs may contain factual inaccuracies; users must review all materials before public broadcast. Liability is limited to [LIABILITY CAP / ORDER].
+## 3. Кредиты и платные функции
+
+- Обработка выпусков расходует кредиты. Кредит списывается при запуске конвейера.
+- Если техническая ошибка сервиса не позволила собрать выпуск, кредит возвращается автоматически (рефанд при ошибке/отмене прогона).
+- Цены и политика возвратов: [ПОЛИТИКА ВОЗВРАТОВ / ССЫЛКА].
+
+## 4. Контент и интеллектуальная собственность
+
+- Пользователь подтверждает, что владеет или лицензировал все загружаемые материалы (сценарии, изображения, аудиообразцы).
+- Клонирование голоса: пользователь подтверждает, что голосовые образцы принадлежат ему самому либо получено явное разрешение их владельца. Клонирование чужого голоса без разрешения запрещено.
+- Права на сгенерированный выпуск принадлежат пользователю; права на само программное обеспечение Сервиса не передаются.
+
+## 5. Запрещённые действия
+
+Запрещены: противоправный контент, клевета, выдача себя за другое лицо с целью обмана, спам, злоупотребление автоматизацией и лимитами, нарушение авторских прав, попытки обхода систем безопасности Сервиса.
+
+## 6. Отказ от гарантий и ограничение ответственности
+
+Сервис предоставляется «как есть». Сгенерированные материалы могут содержать фактические неточности; пользователь обязан проверять все материалы до публичной публикации. Ответственность оператора ограничена [РАЗМЕР/ПОРЯДОК ОГРАНИЧЕНИЯ ОТВЕТСТВЕННОСТИ] и не превышает стоимости кредитов, приобретённых пользователем за последние 30 дней.
+
+## 7. Изменения соглашения
+
+Оператор может изменять соглашение; существенные изменения анонсируются по email не менее чем за 14 дней. Продолжение использования Сервиса означает согласие с новой редакцией.

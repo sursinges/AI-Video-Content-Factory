@@ -1,10 +1,11 @@
-"""M5 metadata module (S5): LLM publish kit + cover placeholder via ffmpeg
-drawtext (real image-gen cover when an image provider arrives)."""
+"""M5 metadata module (S5): LLM publish kit + cover. The cover is a real
+provider-generated image when an image provider works, with a drawtext-card
+fallback when it does not (S5-02)."""
 
 import json
 
 from core.contracts import Chapter, Metadata, ThumbnailSpec
-from core.media import drawtext_card
+from core.media import drawtext_card, overlay_title_text
 from modules.base import Artifact, Module, RunContext
 from modules.m1_script.prompts import extract_json, render
 
@@ -52,10 +53,33 @@ class M5Metadata(Module):
             t += dur
 
         thumb_path = ctx.run_dir / "metadata" / "thumbnail.png"
-        drawtext_card(thumb_path, thumb_text)
+
+        # Cover: real provider image + title overlay; drawtext-card fallback.
+        vis_cfg = ctx.profile.get("visual", {})
+        preset_name = vis_cfg.get("preset") or (getattr(ctx.manifest, "custom", None) or {}).get("visual_preset")
+        cover_prompt = None
+        try:
+            from core.branding import brand_cover_suffix
+            from modules.m3_visual.runner import _load_visual_preset
+
+            preset = _load_visual_preset(preset_name)
+            parts = [preset.get("style_prompt"), preset.get("quality_tags")]
+            cover_prompt = ", ".join(p for p in parts if p)
+            brand = brand_cover_suffix((ctx.data_root or ctx.workspace) / "config")
+            if brand:
+                cover_prompt = f"{cover_prompt}, {brand}"
+            ctx.router.call("image", {"prompt": cover_prompt,
+                                      "negative": preset.get("negative_prompt"),
+                                      "out_path": str(thumb_path), "width": 1280, "height": 720})
+            overlay_title_text(thumb_path, thumb_text)
+        except Exception as e:  # noqa: BLE001 — cover art is optional, fallback is guaranteed
+            ctx.router.on_event(f"m5_metadata cover notice: {e}, using drawtext fallback")
+            cover_prompt = None
+            drawtext_card(thumb_path, thumb_text)
 
         meta = Metadata(
             title=title, description=description, tags=tags, chapters=chapters,
-            thumbnail=ThumbnailSpec(text_overlay=thumb_text, asset=str(thumb_path)),
+            thumbnail=ThumbnailSpec(text_overlay=thumb_text, asset=str(thumb_path),
+                                    ref=cover_prompt),
         )
         return [("metadata/metadata.json", meta)]

@@ -7,8 +7,10 @@ Model id in cfg.model, default kling v1.6 standard image-to-video.
 
 Payload: {image_path (or image_url), prompt, duration_sec, out_path}
 Returns: {video_path, duration_sec, model}
-NOTE: wired as a provider + catalog entry only; m3/m4 assembly integration
-(hero-scene clips) happens when the owner adds a key and decides the budget.
+Wired end-to-end (GAP-01): m3 generates clips for scenes flagged via
+visual.video_scenes (none|hero|all), m4 normalizes them into the timeline.
+Set FAL_KEY in .env and switch defaults.video to fal_video to go live;
+mock_video covers the same path for free.
 """
 
 import time

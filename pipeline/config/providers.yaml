@@ -9,6 +9,7 @@ defaults:
   tts: smallest_ai     # Smallest.ai Waves Lightning TTS (voice magnus)
   stt: mock_stt        # S2 uses local faster-whisper, not a provider
   image: vheer_browser # vheer.com free generation
+  video: mock_video    # GAP-01 image->video: switch to fal_video once FAL_KEY lands
   music: ambient_synth   # procedural ambient synth (ffmpeg); library_music — local music tracks
   search: mock_search
   publish: mock_publish
@@ -16,6 +17,7 @@ defaults:
 # Fallback chains: first entry that fails moves to the next (architecture §3.2).
 fallbacks:
   image: [local_sd]    # vheer rate-limited/down -> local Stable Diffusion
+  video: []            # no auto-fallback: a failed clip keeps its still
   tts: [silero]        # F5 glitch -> Silero (still much better than stopping)
   llm: []              # b_ai disabled while balance=0; re-enable after top-up
 

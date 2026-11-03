@@ -151,6 +151,18 @@ def render_scene_clip(image: str | Path, out: str | Path, duration: float,
         "-c:v", "libx264", "-preset", "fast", "-pix_fmt", "yuv420p", str(out)])
 
 
+def normalize_scene_video(src: str | Path, out: str | Path, duration: float,
+                          fps: int = 25, size: str = "1920x1080"):
+    """Fit a generated image->video clip (fal Kling etc.) into its scene slot:
+    scale/crop to the assembly size, uniform fps, trim to duration or pad by
+    cloning the last frame (Kling gives 5/10 s clips for 30-60 s scenes)."""
+    w, h = size.split("x")
+    vf = (f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},"
+          f"fps={fps},tpad=stop_mode=clone:stop_duration={duration:.2f}")
+    ff(["-i", str(src), "-vf", vf, "-t", f"{duration:.2f}", "-an",
+        "-c:v", "libx264", "-preset", "fast", "-pix_fmt", "yuv420p", str(out)])
+
+
 def ken_burns(image: str | Path, out: str | Path, duration: float, zoom_in: bool = True,
               fps: int = 25, size: str = "1920x1080"):
     """Legacy wrapper for ken_burns: calls render_scene_clip with zoom_in / zoom_out."""
@@ -212,14 +224,60 @@ def mux(video: str | Path, audio: str | Path, out: str | Path):
         "-c:v", "copy", "-c:a", "copy", "-shortest", str(out)])
 
 
+_FONT_CANDIDATES = [
+    r"C:/Windows/Fonts/arialbd.ttf",
+    r"C:/Windows/Fonts/arial.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+    "/Library/Fonts/Arial Bold.ttf",
+]
+
+
+def find_font() -> str | None:
+    """First available bold sans font across Windows/Linux/macOS (None = let
+    ffmpeg's fontconfig pick a default)."""
+    for p in _FONT_CANDIDATES:
+        if Path(p).exists():
+            return p
+    return None
+
+
+def _escape_drawtext(text: str) -> str:
+    safe = re.sub(r"[^\w\s.,!?:-]", "", text)[:40] or "EPISODE"
+    return safe.replace(":", r"\:")
+
+
+def overlay_title_text(img: str | Path, text: str, out: str | Path | None = None,
+                       fontsize: int = 110, accent: str = "0xE1C049",
+                       border: str = "0x0C0A26"):
+    """Burn a title line onto an existing cover image (bottom-center, outlined).
+    Overwrites `img` in place unless `out` is given. Raises RuntimeError on
+    ffmpeg failure; caller decides on fallback."""
+    src = Path(img)
+    font = find_font()
+    if not font:
+        raise RuntimeError("no system font found for drawtext overlay")
+    fesc = font.replace(":", r"\:")
+    safe = _escape_drawtext(text)
+    dest = Path(out) if out else src
+    tmp = dest.with_suffix(".text.png")
+    ff(["-i", str(src),
+        "-vf", (f"drawtext=fontfile='{fesc}':text='{safe}':fontcolor={accent}:fontsize={fontsize}:"
+                f"borderw=6:bordercolor={border}:x=(w-text_w)/2:y=h-text_h-60"),
+        "-frames:v", "1", "-y", str(tmp)])
+    tmp.replace(dest)
+    return dest
+
+
 def drawtext_card(out: str | Path, text: str, bg: str = "0x1E1A4E", accent: str = "0xE1C049",
                   size: str = "1920x1080", font: str | None = None):
-    """Thumbnail/cover placeholder: flat background + text (real image gen in S5 later)."""
+    """Thumbnail/cover fallback: flat background + text (used when the image
+    provider is unavailable; the primary path is provider-generated art)."""
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    font = (font or r"C:/Windows/Fonts/arialbd.ttf").replace(":", r"\:")
-    safe = re.sub(r"[^\w\s.,!?:-]", "", text)[:40] or "EPISODE"
-    safe = safe.replace(":", r"\:")
+    font = (font or find_font() or "").replace(":", r"\:")
+    safe = _escape_drawtext(text)
     ff(["-f", "lavfi", "-i", f"color=c={bg}:s={size}:d=1",
         "-vf", (f"drawtext=fontfile='{font}':text='{safe}':fontcolor={accent}:fontsize=140:"
                 f"x=(w-text_w)/2:y=(h-text_h)/2"),

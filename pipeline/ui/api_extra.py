@@ -244,27 +244,16 @@ def api_cover_generate(body: dict):
                                 "width": 1280, "height": 720})
     except Exception as e:  # noqa: BLE001 — report generation failures clearly
         return JSONResponse({"error": str(e)}, status_code=502)
-    from core.media import drawtext_card
+    from core.media import overlay_title_text
     import shutil
 
     overlay = body.get("overlay") or (meta.get("thumbnail") or {}).get("text_overlay", "")
     final = covers / f"cover_{n:02d}.png"
-    drawtext_card.__globals__  # noqa: B018
     if Path(str(out) + ".tmp.png").exists():
         shutil.copy(str(out) + ".tmp.png", final)
         Path(str(out) + ".tmp.png").unlink()
     if overlay:
-        from core.media import ff
-
-        font = r"C:/Windows/Fonts/arialbd.ttf".replace(":", r"\:")
-        import re as _re
-        safe = _re.sub(r"[^\w\s.,!?:-]", "", overlay)[:40] or "COVER"
-        tmp_out = final.with_suffix(".draw.png")
-        ff(["-i", str(final),
-            "-vf", (f"drawtext=fontfile='{font}':text='{safe}':fontcolor=0xE1C049:fontsize=110:"
-                    f"borderw=6:bordercolor=0x0C0A26:x=(w-text_w)/2:y=h-text_h-60"),
-            "-frames:v", "1", "-y", str(tmp_out)])
-        tmp_out.replace(final)
+        overlay_title_text(final, overlay)
     return {"ok": True, "path": str(final)}
 
 
@@ -273,7 +262,8 @@ def api_cover_list(run_id: str):
     covers = runs_root() / run_id / "metadata" / "covers"
     if not covers.exists():
         return {"covers": []}
-    return {"covers": [str(f.relative_to(runs_root())).replace("\\", "/")
+    # "runs/..." prefix — the same form /api/cover/set and /files/runs/* expect
+    return {"covers": ["runs/" + f.relative_to(runs_root()).as_posix()
                        for f in sorted(covers.glob("cover_*"))]}
 
 
@@ -800,6 +790,7 @@ def api_run_modify_scene(run_id: str, body: dict):
         AVAILABLE_SCENE_EFFECTS,
         mix_and_master,
         mux,
+        normalize_scene_video,
         render_scene_clip,
         xfade_chain,
     )
@@ -826,6 +817,32 @@ def api_run_modify_scene(run_id: str, body: dict):
         sc["asset"] = str(p)
     elif aspect == "text":
         sc["text"] = str(new_value)
+    elif aspect == "motion":  # GAP-01: animate this scene via the video provider
+        want = str(new_value or "video").strip() or "video"
+        if want == "still":
+            sc["video_asset"] = None
+            sc["motion"] = "still"
+        else:
+            asset_p = Path(str(sc.get("asset") or ""))
+            if not asset_p.exists():
+                return JSONResponse({"error": "scene has no still image to animate"}, status_code=400)
+            provs = yaml.safe_load((config_root() / "providers.yaml").read_text(encoding="utf-8"))
+            from core.providers import router as router_mod
+            from core.state import StateDB
+
+            load_env_ctx()
+            st = StateDB(data_root() / "state.db")
+            try:
+                router = router_mod.Router(provs, st, run_id, rd)
+                clip = rd / "visual" / "clips" / f"{sc['id']}.mp4"
+                span = max(float(sc.get("end", 0)) - float(sc.get("start", 0)), 1.0)
+                vres = router.call("video", {"image_path": sc["asset"], "prompt": sc.get("prompt", ""),
+                                             "duration_sec": 10 if span >= 7.5 else 5,
+                                             "out_path": str(clip)})
+                sc["video_asset"] = vres.get("video_path", str(clip))
+                sc["motion"] = "video"
+            finally:
+                st.close()
     elif aspect == "image":
         prompt = str(new_value) if new_value else sc.get("prompt", "")
         preset = _load_visual_preset("dark_history_cinematic")
@@ -858,7 +875,10 @@ def api_run_modify_scene(run_id: str, body: dict):
 
     # Re-render ONLY this single scene clip
     clip_mp4 = work_dir / f"scene_{scene_idx:03d}.mp4"
-    render_scene_clip(sc["asset"], clip_mp4, duration=durations[scene_idx], effect=sc["effect"], size="1920x1080")
+    if sc.get("video_asset") and Path(sc["video_asset"]).exists():
+        normalize_scene_video(sc["video_asset"], clip_mp4, duration=durations[scene_idx], size="1920x1080")
+    else:
+        render_scene_clip(sc["asset"], clip_mp4, duration=durations[scene_idx], effect=sc["effect"], size="1920x1080")
 
     # Fast re-assembly via xfade
     scene_files = [work_dir / f"scene_{i:03d}.mp4" for i in range(len(scenes))]
@@ -1049,13 +1069,9 @@ def api_brand_kit_save(body: dict):
 
 def _brand_cover_suffix() -> str:
     """Brand kit style keywords appended to cover generation prompts."""
-    try:
-        f = config_root() / "brand_kit.yaml"
-        data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
-        parts = [data.get("cover_style") or "", data.get("style_keywords") or ""]
-        return (", ".join(p for p in parts if p)).strip(", ")
-    except Exception:  # noqa: BLE001
-        return ""
+    from core.branding import brand_cover_suffix
+
+    return brand_cover_suffix(config_root())
 
 
 # --- prompt library (5c): reusable prompts, CRUD ------------------------------

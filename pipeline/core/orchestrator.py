@@ -104,7 +104,7 @@ class Orchestrator:
             providers_cfg = dict(providers_cfg)
             providers_cfg["defaults"] = {
                 t: ("mock" if t == "llm" else f"mock_{t}")
-                for t in ("llm", "tts", "stt", "image", "music", "search", "publish")
+                for t in ("llm", "tts", "stt", "image", "video", "music", "search", "publish")
             }
 
         # per-episode provider selection (product vision: visual choice per step)

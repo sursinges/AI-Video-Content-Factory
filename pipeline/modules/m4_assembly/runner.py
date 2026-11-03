@@ -13,6 +13,7 @@ from core.media import (
     ffprobe_duration,
     mix_and_master,
     mux,
+    normalize_scene_video,
     render_scene_clip,
     xfade_chain,
 )
@@ -50,8 +51,14 @@ class M4Assembly(Module):
         applied_effects = []
         for i, sc in enumerate(scenes):
             out = work / f"scene_{i:03d}.mp4"
-            effect = sc.get("effect") or AVAILABLE_SCENE_EFFECTS[i % len(AVAILABLE_SCENE_EFFECTS)]
-            render_scene_clip(sc["asset"], out, duration=durations[i], effect=effect, size=size)
+            video_asset = sc.get("video_asset")
+            if video_asset and Path(video_asset).exists():
+                # GAP-01: real generated clip — normalize into the scene slot
+                effect = "video_clip"
+                normalize_scene_video(video_asset, out, duration=durations[i], size=size)
+            else:
+                effect = sc.get("effect") or AVAILABLE_SCENE_EFFECTS[i % len(AVAILABLE_SCENE_EFFECTS)]
+                render_scene_clip(sc["asset"], out, duration=durations[i], effect=effect, size=size)
             applied_effects.append({
                 "index": i + 1,
                 "scene_id": sc.get("id", f"s{i+1:03d}"),
