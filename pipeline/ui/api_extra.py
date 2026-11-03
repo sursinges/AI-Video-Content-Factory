@@ -86,7 +86,7 @@ def api_batch(body: dict):
             run_id = f"ep-{num:04d}"
             manifest = {"run_id": run_id,
                         "channel_id": body.get("channel_id", "my_channel"),
-                        "topic": topic, "format": "sleep_history",
+                        "topic": topic, "format": "long_narrative",
                         "target_minutes": min(int(body.get("target_minutes", 1)), 60),
                         "language": body.get("language", "ru"), "reference_urls": [],
                         "profile": "config/channel.profile.yaml", "overrides": {}}
@@ -230,7 +230,7 @@ def api_cover_generate(body: dict):
     provider = registry.get("image/" + (provider_id or ""))
     if provider is None:
         return JSONResponse({"error": "image provider not found"}, status_code=400)
-    prompt = body.get("prompt") or "flat vector night scene, calm sleep mood, dark palette, no text"
+    prompt = body.get("prompt") or "cinematic night scene, moody atmosphere, dark palette, no text"
     text_prompt = (body.get("text_prompt") or "").strip()
     overlay_text = (body.get("overlay") or "").strip()
     brand = _brand_cover_suffix()

@@ -9,7 +9,7 @@ class EpisodeManifest(BaseModel):
     run_id: str = Field(pattern=r"^[a-zA-Z0-9_-]+$")
     channel_id: str
     topic: str = Field(min_length=3)
-    format: str = "sleep_history"
+    format: str = "long_narrative"
     # Free length: None means the script skeleton decides, downstream works
     # from actual audio timings. Nothing may assume a fixed duration.
     target_minutes: int | None = None

@@ -1,8 +1,8 @@
 # Video Formats: each format defines visual, audio, pacing, and assembly defaults.
 # Format is selected in the episode manifest; can be overridden by channel profile.
 
-sleep_history:
-  name: "Sleep & Ambient Narrative (Long-form calm stories, 16:9)"
+long_narrative:
+  name: "Long-form Narrative (calm atmospheric stories, 16:9)"
   visual_preset: dark_history_cinematic
   tts_speed: 0.9
   tag_density: "1 tag per 1-3 sentences"

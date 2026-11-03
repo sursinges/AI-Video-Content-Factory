@@ -2,7 +2,7 @@
 run_id: ep-0001
 channel_id: my_channel
 topic: "Осада Константинополя 1453"
-format: sleep_history
+format: long_narrative
 target_minutes: null   # null => length decided by the script skeleton
 language: ru
 reference_urls: []

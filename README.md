@@ -69,7 +69,7 @@ The factory does not hardcode content styles; it parameterizes them via `config/
 | `tech_review` | **16:9** | 1920x1080 | 5 – 10 sec | Hardware, software, gadget reviews and comparisons |
 | `educational_narrative` | **16:9** | 1920x1080 | 12 – 25 sec | Science, nature, biography, and narrative non-fiction |
 | `talking_head` | **16:9** | 1920x1080 | 8 – 15 sec | Commentary, dynamic monologues, presentations |
-| `sleep_history` | **16:9** | 1920x1080 | 30 – 60 sec | Atmospheric, deep bedtime storytelling and relaxing lore |
+| `long_narrative` | **16:9** | 1920x1080 | 30 – 60 sec | Calm atmospheric storytelling for long-form background viewing |
 
 ---
 

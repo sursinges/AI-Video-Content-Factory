@@ -40,7 +40,7 @@ def test_check_configs(tmp_path):
     cfg_dir.mkdir()
     (cfg_dir / "providers.yaml").write_text("defaults: {}\nproviders: {}\n", encoding="utf-8")
     (cfg_dir / "channel.profile.yaml").write_text("name: Test Channel\n", encoding="utf-8")
-    (cfg_dir / "formats.yaml").write_text("sleep_history: {}\n", encoding="utf-8")
+    (cfg_dir / "formats.yaml").write_text("long_narrative: {}\n", encoding="utf-8")
 
     reports = check_configs(tmp_path)
     assert all(r["status"] == "ok" for r in reports if r["name"] != "Visual Presets")

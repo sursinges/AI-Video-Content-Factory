@@ -13,7 +13,7 @@ $scenes_text
 
 Правила промпта:
 — Каждая фраза промпта: composition/objects/action/mood одной строки, 15-30 слов, БЕЗ текста и букв на картинке, БЕЗ имён собственных в кавычках.
-— Общий стиль одинаков для всех сцен: flat vector illustration, dark night palette, calm sleep mood, no text.
+— Общий стиль одинаков для всех сцен: cinematic illustration, dark night palette, calm atmospheric mood, no text.
 — Отражай СОДЕРЖАНИЕ конкретной сцены (что происходит в тексте), а не абстракцию.
 
 Выведи строго JSON: {"prompts": ["промпт сцены 1", "промпт сцены 2", ...]} — ровно по количеству сцен выше.

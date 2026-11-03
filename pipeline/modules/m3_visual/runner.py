@@ -92,7 +92,7 @@ def _build_scenes(ctx, subs: dict, world: WorldContext, prompts: list[str] | Non
         nonlocal block, block_start
         if not block:
             return
-        prompt = "flat vector night scene, calm sleep mood, dark palette, no text"
+        prompt = "cinematic night scene, moody atmosphere, dark palette, no text"
         if prompts and len(scenes) < len(prompts):
             prompt = prompts[len(scenes)]
         scenes.append(Scene(
@@ -240,7 +240,7 @@ class M3Visual(Module):
                     # LLM may return fewer prompts than scenes or fail — pad deterministically
                     for i, sc_item in enumerate(scenes[len(prompts):len(prompts) + len(block)]):
                         prompts.append(got[i] if i < len(got) else
-                                       f"{style}, {world.era}, {world.light}, {sc_item.text_ref}, calm sleep mood, no text")
+                                       f"{style}, {world.era}, {world.light}, {sc_item.text_ref}, calm atmospheric mood, no text")
                     block, block_ids = [], []
 
         # 5) image generation per scene — SKIPPED in draft plan (storyboard

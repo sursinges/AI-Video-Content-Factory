@@ -245,7 +245,7 @@ def api_studio_build(body: dict):
         if img and not Path(img).exists():
             img = None
         if not img:
-            prompt = sc.get("prompt") or "flat vector night scene, calm sleep mood, no text"
+            prompt = sc.get("prompt") or "cinematic night scene, moody atmosphere, no text"
             out_img = run_dir / "scenes" / f"s{i:02d}.png"
             try:
                 res = router.call("image", {"prompt": prompt, "out_path": str(out_img),

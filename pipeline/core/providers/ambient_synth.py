@@ -1,7 +1,7 @@
 """Procedural ambient synthesizer (ffmpeg lavfi): free, deterministic, no licensing.
 
 Generates an ambient bed of exactly the requested duration from noise/oscillator
-primitives — the "фоновой музыки" for sleep-history episodes without any external
+primitives — the background bed for long narrative episodes without any external
 service. Moods: night / rain / wind / drone / fire / space.
 
 v2 (2026-10-05): layered graphs — each mood stacks 3-5 sources (rumble bed,

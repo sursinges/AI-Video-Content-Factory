@@ -12,7 +12,7 @@ def test_formats_definitions():
     fmts = yaml.safe_load(fmt_file.read_text(encoding="utf-8"))
     assert isinstance(fmts, dict)
 
-    expected = ["sleep_history", "talking_head", "explainer", "short_vertical", "tech_review", "educational_narrative"]
+    expected = ["long_narrative", "talking_head", "explainer", "short_vertical", "tech_review", "educational_narrative"]
     for key in expected:
         assert key in fmts, f"Format {key} missing from formats.yaml"
         f = fmts[key]
@@ -35,6 +35,6 @@ def test_example_manifests():
         assert manifest.run_id
         assert manifest.topic
         assert manifest.format in [
-            "sleep_history", "talking_head", "explainer",
+            "long_narrative", "talking_head", "explainer",
             "short_vertical", "tech_review", "educational_narrative"
         ]

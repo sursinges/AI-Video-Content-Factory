@@ -7,7 +7,7 @@ This document establishes quality guidelines for media assets generated across c
 ## 1. Scripting Stage (M1 Script)
 
 1. **Formats & Objectives:**
-   - Universal adaptation for requested format (`short_vertical`, `tech_review`, `explainer`, `educational_narrative`, `sleep_history`).
+   - Universal adaptation for requested format (`short_vertical`, `tech_review`, `explainer`, `educational_narrative`, `long_narrative`).
    - Tone matches profile: conversational, structured, authoritative, or atmospheric depending on format.
 2. **Structure Requirements:**
    - **Hook & Introduction:** Captures audience attention in the opening 3–5 seconds; sets up premise and core question.

@@ -21,9 +21,9 @@ class M5Metadata(Module):
 
         if ctx.dry_run:
             title = ctx.manifest.topic[:70]
-            tags = ["mock", "sleep", "history"]
-            thumb_text = "ИСТОРИЯ НОЧИ"[:20]
-            description = f"MOCK DESCRIPTION — {ctx.manifest.topic}. Спокойная история под засыпание."
+            tags = ["mock", "narrative", "documentary"]
+            thumb_text = "NIGHT STORY"[:20]
+            description = f"MOCK DESCRIPTION — {ctx.manifest.topic}. Calm atmospheric narrative."
         else:
             try:
                 resp = ctx.router.call("llm", {"prompt": render("metadata_series.md", {
@@ -36,14 +36,14 @@ class M5Metadata(Module):
                 thumb_text = str(data.get("thumbnail_text") or title[:20])
             except Exception as e:
                 ctx.router.on_event(f"m5_metadata LLM notice: {e}, using fallback metadata")
-                title = f"{ctx.manifest.topic} — Забытая война, изменившая всё"[:70]
+                title = f"{ctx.manifest.topic} — то, о чём молчат учебники"[:70]
                 description = (
-                    f"{ctx.manifest.topic}. Атмосферная историческая история под засыпание.\n\n"
+                    f"{ctx.manifest.topic}. Атмосферная нарративная история от первого лица.\n\n"
                     f"{summary[:400]}...\n\n"
-                    "Спокойного прослушивания и добрых снов."
+                    "Приятного прослушивания."
                 )
-                tags = ["история", "гражданская война", "испания", "под засыпание", "ночная история", "аудиокнига", "сон"]
-                thumb_text = "ИСПАНИЯ 1936"
+                tags = ["нарратив", "документальная история", "атмосферный рассказ", "ночная история", "аудиокнига"]
+                thumb_text = "НАРАТИВ"
 
         # chapters: one per script part, timed from audio part durations
         chapters, t = [], 0.0

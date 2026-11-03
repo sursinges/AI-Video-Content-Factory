@@ -3,7 +3,7 @@
 Principles:
 1. Fresh perspective (новый взгляд) and charisma preservation.
 2. Narrative rearrangement (перестановка данных, нелинейная подача, кульминация/парадокс в начале).
-3. Mood transformation (смена настроения, кинематографичный саспенс / засыпание).
+3. Mood transformation (tone shift: cinematic suspense / calm quiet).
 4. Strict length preservation (никакого укорачивания в 10-100 раз; поблочная генерация для длинных текстов).
 5. Clean voiceover text (TTS-ready, no timestamps or stage directions).
 """

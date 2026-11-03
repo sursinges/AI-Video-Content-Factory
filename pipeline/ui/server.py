@@ -360,7 +360,7 @@ def api_episode(body: dict, request: Request):
         "run_id": run_id,
         "channel_id": body.get("channel_id", "my_channel"),
         "topic": topic,
-        "format": "sleep_history",
+        "format": "long_narrative",
         "target_minutes": min(int(body.get("target_minutes", 1)), 120),
         "language": body.get("language", "ru"),
         "reference_urls": body.get("reference_urls", []),

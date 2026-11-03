@@ -28,6 +28,6 @@ presets:
   flat_vector_night:
     name: "Flat Vector Modern (Minimalist Night)"
     description: "Clean minimalist vector art, soft curves, deep midnight-blue and amber gold palette, atmospheric night illumination."
-    style_prompt: "flat vector night scene, calm sleep mood, dark deep blue and amber palette, elegant minimalistic shapes, atmospheric soft moonlight"
+    style_prompt: "flat vector night scene, calm atmospheric mood, dark deep blue and amber palette, elegant minimalistic shapes, atmospheric soft moonlight"
     negative_prompt: "photorealism, 3d render, complex messy details, noisy textures, neon, bright harsh lights, text, watermark"
     quality_tags: "clean vector art, soothing aesthetic"

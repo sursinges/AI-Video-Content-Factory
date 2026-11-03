@@ -59,7 +59,7 @@ class F5TTSProvider(Provider):
             wav, sr, _spec = f5.infer(
                 ref_file=ref_audio, ref_text=ref_text, gen_text=text,
                 file_wave=str(out),
-                speed=float(self.cfg.get("speed", 0.9)),  # sleep narration: slightly slower
+                speed=float(self.cfg.get("speed", 0.9)),  # calm narration: slightly slower
                 remove_silence=True,
                 seed=int(seed) % 2**31 if seed else None,
             )
