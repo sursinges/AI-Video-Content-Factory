@@ -1,21 +1,32 @@
-# Privacy Policy Template
+# Политика конфиденциальности (Privacy Policy)
 
-_Effective date: [DATE]. Data Controller: [ENTITY, CONTACTS]._
+> ⚠️ **ЧЕРНОВИК ДЛЯ ХОСТЕД-РЕЖИМА**: перед публикацией владелец обязан заменить метки в квадратных скобках и иметь текст проверенным юристом (особенно если обрабатываются данные пользователей из ЕС/РФ — проверь применимые требования GDPR/152-ФЗ).
 
-## 1. Information Processed
-- **Account Data:** Email address, password hash (PBKDF2), registration timestamp, role.
-- **Billing:** Credit balance, ledger of processing charges and top-ups.
-- **User Content:** Scripts, images, audio reference recordings, output video files (stored in isolated tenant directories).
-- **Technical Logs:** Access timestamps, IP addresses for security logging, and API request audits.
+_Дата вступления в силу: [ДАТА]. Оператор данных (контролёр): [ВЛАДЕЛЕЦ / НАЗВАНИЕ], контакты: [EMAIL]._
 
-## 2. Purpose of Processing
-Delivering automated video generation, securing user accounts, preventing service abuse, and providing technical support.
+## 1. Обрабатываемые данные
 
-## 3. Third-Party Disclosures
-Model requests under Bring Your Own Key (BYOK) configurations are routed directly to user-configured upstream providers (e.g. OpenAI, OpenRouter, ElevenLabs) using the user's API credentials. User data is never sold.
+- **Данные аккаунта:** адрес электронной почты, хеш пароля (PBKDF2 с солью), время регистрации, роль.
+- **Биллинг:** баланс кредитов, журнал списаний и пополнений.
+- **Контент пользователя:** сценарии, изображения, аудио-образцы голоса, итоговые видеофайлы (хранятся в изолированных каталогах тенантов).
+- **Технические журналы:** время обращений, IP-адреса для журналов безопасности, аудит API-запросов.
 
-## 4. Security Measures
-Passwords hashed with salted PBKDF2; session authentication via secure HttpOnly cookies; tenant workspace data isolation on disk.
+## 2. Цели обработки
 
-## 5. Contact
-Inquiries regarding data access, corrections, or deletion: [CONTACT EMAIL].
+Оказание услуги автоматизированной генерации видео, защита учётных записей, предотвращение злоупотреблений, техническая поддержка.
+
+## 3. Передача третьим лицам
+
+При конфигурации Bring Your Own Key (BYOK) запросы к моделям направляются напрямую в настроенные пользователем внешние сервисы (например, OpenRouter, ElevenLabs, fal.ai) с использованием API-ключей самого пользователя — оператор такие ключи не видит и не хранит в открытом виде. Данные пользователей не продаются и не передаются третьим лицам в иных целях, кроме описанных выше.
+
+## 4. Меры безопасности
+
+Пароли хранятся в виде хешей PBKDF2 с солью; сессионная аутентификация — через защищённые HttpOnly cookie; изоляция данных тенантов на уровне файловой системы и отдельных баз данных.
+
+## 5. Срок хранения и удаление
+
+Данные аккаунта хранятся до удаления аккаунта. По запросу пользователя данные предоставляются, исправляются или удаляются через: [EMAIL]. Журналы безопасности хранятся не более [СРОК, НАПР. 90 ДНЕЙ].
+
+## 6. Контакты
+
+Вопросы о доступе к данным, их исправлении или удалении: [EMAIL].
