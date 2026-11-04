@@ -966,7 +966,7 @@ def api_storyboard_enhance_prompt(body: dict):
     except Exception:
         pass
 
-    clean_idea = user_idea or scene_text or "historical documentary scene"
+    clean_idea = user_idea or scene_text or "documentary scene"
     fallback_prompt = f"35mm archival photograph, {clean_idea}, {preset.get('style_prompt', '')}, dramatic chiaroscuro lighting, deep shadows, authentic texture, 8k"
     return {
         "ok": True,

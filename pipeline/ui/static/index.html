@@ -111,7 +111,7 @@ nav.side button.active svg { opacity: 1; color: var(--accent); }
   background: var(--ok); margin-right: 7px;
   animation: pulseDot 2.4s ease-in-out infinite;
 }
-.lang-foot { padding: 0 16px 14px; }
+.lang-foot { padding: 0 16px 14px; margin-top: 8px; }
 .side-search { padding: 8px 12px 0; }
 .side-search input { margin: 0; font-size: 12px; padding: 7px 10px; }
 .search-results { padding: 2px 12px; max-height: 230px; overflow-y: auto; }
@@ -672,9 +672,46 @@ const DICT = {
   'lib.refs': ['Референсы и стили','References & styles','Referencias y estilos','参考与风格','रेफ़रेंस व स्टाइल','المراجع والأنماط','Referências e estilos','Références & styles','Referenzen & Stile','リファレンスとスタイル'],
   'c.save': ['Сохранить','Save','Guardar','保存','सहेजें','حفظ','Salvar','Enregistrer','Speichern','保存'],
   'c.close': ['Закрыть','Close','Cerrar','关闭','बंद करें','إغلاق','Fechar','Fermer','Schließen','閉じる'],
-  "Заголовок или основная историческая тема ролика.": ["Заголовок или основная историческая тема ролика.","Episode title or main historical theme.","Título del episodio o tema histórico principal.","视频标题或主要历史主题。","एपिसोड शीर्षक या मुख्य ऐतिहासिक विषय।","عنوان الحلقة أو الموضوع التاريخي الرئيسي.","Título do episódio ou tema histórico principal.","Titre de l'épisode ou thème historique principal.","Episodentitel oder Hauptthema.","エピソードのタイトルまたは主要な歴史的テーマ。"],
+  "Тема ролика — о чём будет история.": ["Тема ролика — о чём будет история.","The episode topic — what the story is about.","El tema del vídeo: de qué tratará la historia.","视频主题——故事讲什么。","एपिसोड का विषय — कहानी किस बारे में है।","موضوع الفيديو — عن ماذا ستكون القصة.","O tema do vídeo — sobre o que será a história.","Le sujet de la vidéo — de quoi l'histoire va parler.","Das Thema des Videos — worum die Geschichte geht.","動画のテーマ——物語の内容。"],
+  "Запрос к нейросети: опиши, чего хочешь от сценария — подача, тон, структура, аудитория, что точно НЕ трогать. Сценарий пишется по этому запросу.": ["Запрос к нейросети: опиши, чего хочешь от сценария — подача, тон, структура, аудитория, что точно НЕ трогать. Сценарий пишется по этому запросу.","Your brief to the AI: describe what you want from the script — delivery, tone, structure, audience, what to avoid. The script is written against this brief.","Tu encargo a la IA: describe qué quieres del guion — tono, estilo, estructura, audiencia, qué evitar. El guion se escribe según ese encargo.","给 AI 的任务书：描述你对脚本的期望——叙事方式、语气、结构、受众以及不要涉及的内容。脚本将按此撰写。","AI को आपका ब्रीफ: बताएं कि स्क्रिप्ट से आप क्या चाहते हैं — अंदाज़, टोन, संरचना, दर्शक और क्या नहीं छूना। स्क्रिप्ट इसी ब्रीफ पर लिखी जाएगी।","طلبك للذكاء الاصطناعي: صف ما تريده من السيناريو — الأسلوب والنبرة والبنية والجمهور وما يجب تجنبه. يُكتب السيناريو وفق هذا الطلب.","Seu briefing para a IA: descreva o que quer do roteiro — estilo, tom, estrutura, público e o que evitar. O roteiro é escrito a partir disso.","Votre brief pour l'IA : décrivez ce que vous attendez du script — ton, structure, public, sujets à éviter. Le script est écrit à partir de ce brief.","Dein Briefing an die KI: beschreibe, was du vom Skript willst — Stil, Tonalität, Struktur, Publikum, Tabus. Das Skript wird nach diesem Briefing geschrieben.","AIへの指示：脚本に何を求めるか——語り口、トーン、構成、対象読者、避けることを書きます。脚本はこの指示に沿って書かれます。"],
+  "Например: Почему маяки до сих пор важны": ["Например: Почему маяки до сих пор важны", "e.g. Why lighthouses still matter", "P. ej.: Por qué los faros siguen importando", "例如：灯塔为何依然重要", "जैसे: लाइटहाउस अब भी क्यों मायने रखते हैं", "مثال: لماذا لا تزال المنارات مهمة", "Ex.: Por que faróis ainda importam", "Ex. : Pourquoi les phares comptent encore", "z. B. Warum Leuchttürme wichtig bleiben", "例：なぜ灯台は今も重要なのか"],
+  "Например: спокойный размеренный тон, термины объясняй простыми словами, без громких звуков и кликбейта...": ["Например: спокойный размеренный тон, термины объясняй простыми словами, без громких звуков и кликбейта...", "e.g. calm measured tone, explain terms simply, no loud sounds or clickbait...", "P. ej.: tono sereno, explica los términos de forma simple, sin sonidos fuertes ni clickbait...", "例如：平稳舒缓的语调，术语简单解释，无巨响和标题党……", "जैसे: शांत धीमा लहजा, शब्द आसान भाषा में समझाएं, तेज़ आवाज़ें या क्लिकबेट नहीं...", "مثال: نبرة هادئة متزنة، اشرح المصطلحات ببساطة، بدون أصوات عالية أو عناوين مضللة...", "Ex.: tom calmo, termos explicados de forma simples, sem sons altos ou clickbait...", "Ex. : ton calme, termes expliqués simplement, sans sons forts ni clickbait...", "z. B. ruhiger Ton, Begriffe einfach erklärt, keine lauten Geräusche oder Klickbait...", "例：落ち着いた語り、用語は平易に、大きな音や釣りタイトルなし..."],
+  "необязательно": ["необязательно", "optional", "opcional", "可选", "वैकल्पिक", "اختياري", "opcional", "optionnel", "optional", "任意"],
+  "Соавтор стиля (ИИ)": ["Соавтор стиля (ИИ)","AI style co-author","Coautor de estilo (IA)","风格共创（AI）","स्टाइल सह-लेखक (AI)","مشارك في صناعة النمط (AI)","Coautor de estilo (IA)","Co-auteur de style (IA)","KI-Stil-Co-Autor","スタイル共作（AI）"],
+  "Опиши желаемый вид картинок своими словами — нейросеть соберёт готовый пресет, а ты решишь, добавлять его или попросить другой вариант.": ["Опиши желаемый вид картинок своими словами — нейросеть соберёт готовый пресет, а ты решишь, добавлять его или попросить другой вариант.","Describe the look in your own words — the AI drafts a ready preset, and you decide whether to add it or ask for another take.","Describe el aspecto con tus palabras: la IA arma un preset listo y tú decides si añadirlo o pedir otra versión.","用自己的话描述你想要的画面效果——AI 会拟好现成的预设，由你决定是否添加或再要一版。","अपने शब्दों में बताएं कि तस्वीरें कैसी चाहिए — AI एक तैयार प्रीसेट बनाएगा, और आप तय करेंगे कि जोड़ना है या दूसरा विकल्प मांगना है।","صِف شكل الصور الذي تريده بكلماتك — سيجهّز الذكاء الاصطناعي إعدادًا جاهزًا وأنت تقرر إضافته أو طلب نسخة أخرى.","Descreva o visual com suas palavras — a IA monta um preset pronto e você decide se adiciona ou pede outra versão.","Décrivez le rendu souhaité avec vos mots — l'IA propose un preset prêt, et vous décidez de l'ajouter ou d'en demander une autre version.","Beschreibe den Look in eigenen Worten — die KI entwirft einen fertigen Preset, du entscheidest übernehmen oder neue Variante.","お好みの見た目を自由に書いてください——AIがプリセット案を作り、追加するか別案を頼むかはあなたが決めます。"],
+  "Опиши стиль: свет, палитра, фактуры, настроение…": ["Опиши стиль: свет, палитра, фактуры, настроение…","Describe the style: light, palette, textures, mood…","Describe el estilo: luz, paleta, texturas, ánimo…","描述风格：光线、配色、质感、氛围……","स्टाइल बताएं: रोशनी, पैलेट, बनावट, मूड…","صف النمط: الإضاءة، الألوان، الملمس، المزاج…","Descreva o estilo: luz, paleta, texturas, clima…","Décrivez le style : lumière, palette, textures, ambiance…","Beschreibe den Stil: Licht, Palette, Texturen, Stimmung…","スタイルを書いてください：光、パレット、質感、雰囲気…"],
+  "Добавить пресет": ["Добавить пресет","Add preset","Añadir preset","添加预设","प्रीसेट जोड़ें","أضف الإعداد","Adicionar preset","Ajouter le preset","Preset hinzufügen","プリセットを追加"],
+  "Ещё вариант": ["Ещё вариант","Another take","Otra versión","再来一版","एक और विकल्प","نسخة أخرى","Outra versão","Une autre version","Noch eine Variante","別の案"],
+  "генерация…": ["генерация…","generating…","generando…","生成中…","जनरेट हो रहा है…","جارٍ التوليد…","gerando…","génération…","generiere…","生成中…"],
+  "nav.guide": ["Гайд и FAQ","Guide & FAQ","Guía y FAQ","指南与FAQ","गाइड और FAQ","دليل وأسئلة","Guia e FAQ","Guide et FAQ","Anleitung & FAQ","ガイドとFAQ"],
+  "grp.help": ["Помощь","Help","Ayuda","帮助","सहायता","مساعدة","Ajuda","Aide","Hilfe","ヘルプ"],
+  "guide.sub": ["Как пользоваться продуктом: установка, версии, частые вопросы.","How to use the product: setup, editions, common questions.","Cómo usar el producto: instalación, ediciones, preguntas frecuentes.","如何使用本产品：安装、版本、常见问题。","उत्पाद का उपयोग कैसे करें: सेटअप, संस्करण, सामान्य प्रश्न।","كيفية استخدام المنتج: التثبيت والإصدارات والأسئلة الشائعة.","Como usar o produto: instalação, edições, perguntas frequentes.","Comment utiliser le produit : installation, éditions, questions fréquentes.","So verwendest du das Produkt: Setup, Editionen, häufige Fragen.","製品の使い方：セットアップ、エディション、よくある質問。"],
+  "guide.install.t": ["Установка с GitHub","Installing from GitHub","Instalación desde GitHub","从 GitHub 安装","GitHub से इंस्टॉल","التثبيت من GitHub","Instalando do GitHub","Installation depuis GitHub","Installation von GitHub","GitHubからのインストール"],
+  "guide.editions.t": ["Desktop и Web — две версии продукта","Desktop & Web — the two editions","Desktop y Web — las dos ediciones","Desktop 与 Web——两种版本","Desktop और Web — दो संस्करण","Desktop و Web — نسختا المنتج","Desktop e Web — as duas edições","Desktop et Web — les deux éditions","Desktop und Web — die beiden Editionen","DesktopとWeb——2つのエディション"],
+  "guide.episode.t": ["Форма нового выпуска — что значат поля","The new-episode form — what each field means","El formulario de episodio — qué significa cada campo","新剧集表单——字段含义","नया एपिसोड फ़ॉर्म — हर फ़ील्ड का मतलब","نموذج الحلقة الجديدة — معنى كل حقل","O formulário de novo episódio — o que significa cada campo","Le formulaire de nouvel épisode — signification des champs","Das Neue-Episode-Formular — Bedeutung der Felder","新規エピソードフォームの各項目"],
+  "guide.voices.t": ["Голоса и клонирование голоса","Voices & voice cloning","Voces y clonación de voz","语音与克隆","वॉइस और वॉइस क्लोनिंग","الأصوات واستنساخ الصوت","Vozes e clonagem de voz","Voix et clonage de voix","Stimmen & Voice-Cloning","ボイスと音声クローン"],
+  "guide.token.t": ["Что такое «Access token required (UI_TOKEN)»","What “Access token required (UI_TOKEN)” means","Qué significa «Access token required (UI_TOKEN)»","「Access token required (UI_TOKEN)」是什么","«Access token required (UI_TOKEN)» का मतलब","ماذا يعني «Access token required (UI_TOKEN)»","O que significa «Access token required (UI_TOKEN)»","Que signifie « Access token required (UI_TOKEN) »","Was „Access token required (UI_TOKEN)“ bedeutet","「Access token required (UI_TOKEN)」とは"],
+  "guide.workers.t": ["Воркеры в Web-версии","Workers in the Web edition","Workers en la edición Web","Web 版中的 Workers","Web संस्करण में workers","العمال في نسخة الويب","Workers na edição Web","Workers dans l'édition Web","Workers in der Web-Edition","Webエディションのワーカー"],
+  "guide.faq.t": ["Частые вопросы","FAQ","Preguntas frecuentes","常见问题","सामान्य प्रश्न","أسئلة شائعة","Perguntas frequentes","FAQ","FAQ","よくある質問"],
+  "acc.switch": ["сменить аккаунт","switch account","cambiar de cuenta","切换账号","खाता बदलें","تغيير الحساب","trocar de conta","changer de compte","Konto wechseln","アカウント切替"],
+  "admin": ["админ","admin","admin","管理员","एडमिन","مشرف","admin","admin","Admin","管理者"],
+  "user": ["пользователь","user","usuario","用户","उपयोगकर्ता","مستخدم","usuário","utilisateur","Benutzer","ユーザー"],
+  "Каждый шаг — за интерфейсом провайдера: любой движок подключается конфигом, порядок шагов фиксирует код.": ["Каждый шаг — за интерфейсом провайдера: любой движок подключается конфигом, порядок шагов фиксирует код.","Every step sits behind a provider interface: any engine plugs in via config, the step order is fixed by the code.","Cada paso está tras una interfaz de proveedor: cualquier motor se conecta por config; el orden lo fija el código.","每个步骤都在提供方接口之后：任何引擎都可以通过配置接入，步骤顺序由代码固定。","हर चरण प्रोवाइडर इंटरफ़ेस के पीछे है: कोई भी इंजन config से जुड़ता है, चरणों का क्रम कोड तय करता है。","كل خطوة خلف واجهة مزود: أي محرك يتصل عبر الإعداد، وترتيب الخطوات يحدده الكود.","Cada passo fica atrás de uma interface de provedor: qualquer motor entra por config; a ordem é fixada no código.","Chaque étape est derrière une interface de fournisseur : tout moteur se branche par config, l'ordre est fixé par le code.","Jeder Schritt liegt hinter einer Provider-Schnittstelle: jede Engine kommt per Config dazu, die Reihenfolge fixiert der Code.","各ステップはプロバイダーインターフェースの背後にあり、どのエンジンも設定で接続でき、順序はコードで固定されます。"],
+  "Script": ["Скрипт", "Script", "Guion", "脚本", "स्क्रिप्ट", "سكربت", "Roteiro", "Script", "Skript", "脚本"],
+  "Skeleton generation -> chunks -> drama critique -> fact-check; language and tone from profile.": ["Каркас выпуска → связанные чанки → драматургический критик → факт-чек; язык и тон — из профиля.","Skeleton -> linked chunks -> drama critique -> fact-check; language and tone from the profile.","Esqueleto -> fragmentos enlazados -> crítica dramática -> verificación de hechos; idioma y tono del perfil.","骨架→关联分段→戏剧评论→事实核查；语言和语气来自配置。","ढांचा -> जुड़े हिस्से -> ड्रामा समीक्षा -> तथ्य-जांच; भाषा और लहजा प्रोफ़ाइल से।","هيكل -> أجزاء مترابطة -> نقد درامي -> تحقق من الحقائق؛ اللغة والنبرة من الملف الشخصي.","Esqueleto -> blocos vinculados -> crítica dramática -> checagem de fatos; idioma e tom do perfil.","Squelette -> blocs liés -> critique dramatique -> vérification des faits ; langue et ton du profil.","Gerüst -> verknüpfte Teile -> Dramaturgie-Kritik -> Faktencheck; Sprache und Ton aus dem Profil.","骨子→連結チャンク→演出チェック→ファクトチェック。言語とトーンはプロフィールから。"],
+  "Audio": ["Озвучка", "Audio", "Audio", "音频", "ऑडियो", "صوت", "Áudio", "Audio", "Audio", "音声"],
+  "Chunked TTS synthesis with emotion tags; Whisper alignment for timestamps and subtitles.": ["Посегментный TTS-синтез с тегами эмоций; выравнивание Whisper для таймкодов и субтитров.","Chunked TTS synthesis with emotion tags; Whisper alignment for timestamps and subtitles.","Síntesis TTS por fragmentos con etiquetas de emoción; alineación Whisper para tiempos y subtítulos.","分段 TTS 合成（带情感标签）；Whisper 对齐生成时间戳和字幕。","इमोशन टैग के साथ खंडित TTS संश्लेषण; टाइमस्टैम्प और सबटाइटल हेतु Whisper अलाइनमेंट।","توليف TTS على مقاطع مع وسوم عاطفية؛ محاذاة Whisper للطوابع الزمنية والترجمة.","Síntese TTS em blocos com tags de emoção; alinhamento Whisper para tempos e legendas.","Synthèse TTS par blocs avec tags d'émotion ; alignement Whisper pour timecodes et sous-titres.","Blockweise TTS-Synthese mit Emotions-Tags; Whisper-Ausrichtung für Timecodes und Untertitel.","感情タグ付きの分割TTS合成。Whisperアライメントでタイムコードと字幕を生成。"],
+  "Visual": ["Визуал", "Visual", "Visual", "视觉", "विज़ुअल", "مرئي", "Visual", "Visuel", "Visuell", "ビジュアル"],
+  "Timecoded scene direction, frame generation matching visual preset, visual critique.": ["Покадровая режиссура с таймкодами, генерация кадров под визуальный пресет, критик визуала.","Timecoded scene direction, frame generation matching the visual preset, visual critique.","Dirección de escenas con timecodes, generación de fotogramas según el preset visual, crítica visual.","带时间码的场景调度、按视觉预设生成画面、视觉审查。","टाइमकोड वाला सीन डायरेक्शन, विज़ुअल प्रीसेट अनुसार फ़्रेम जनरेशन, विज़ुअल समीक्षा।","إخراج المشاهد بالطوابع الزمنية، توليد الإطارات وفق الإعداد المرئي، ومراجعة بصرية.","Direção de cenas com timecodes, geração de quadros conforme o preset visual, crítica visual.","Mise en scène timecodée, génération d'images selon le preset visuel, critique visuelle.","Timecode-basierte Szenenregie, Bildgenerierung nach visuellem Preset, visuelle Kritik.","タイムコード付きシーン演出、ビジュアルプリセットに沿ったフレーム生成、ビジュアルレビュー。"],
+  "Assembly": ["Монтаж", "Assembly", "Ensamblado", "合成", "असेंबली", "مونتاج", "Montagem", "Assemblage", "Montage", "編集"],
+  "Frame animation with Ken Burns FX -> crossfades -> background audio mix -> subtitle burn-in.": ["Анимация кадров с эффектами Ken Burns → кроссфейды → микс фоновой музыки → вшивание субтитров.","Frame animation with Ken Burns FX -> crossfades -> background audio mix -> subtitle burn-in.","Animación de fotogramas con efectos Ken Burns -> fundidos -> mezcla de audio de fondo -> subtítulos incrustados.","帧动画（Ken Burns 特效）→交叉淡化→背景音混合→字幕烧录。","Ken Burns FX के साथ फ़्रेम एनिमेशन -> क्रॉसफ़ेड -> बैकग्राउंड ऑडियो मिक्स -> सबटाइटल बर्न-इन।","تحريك الإطارات بتأثيرات Ken Burns -> تلاشٍ متقاطع -> مزج الموسيقى -> حرق الترجمة.","Animação de quadros com efeitos Ken Burns -> crossfades -> mixagem de áudio -> legendas gravadas.","Animation d'images avec effets Ken Burns -> fondus enchaînés -> mixage audio -> incrustation des sous-titres.","Frame-Animation mit Ken-Burns-Effekten -> Blenden -> Ambient-Mix -> Untertitel-Einbrennen.","フレームアニメーション（Ken Burns）→クロスフェード→BGMミックス→字幕焼き込み。"],
+  "Metadata": ["Метаданные", "Metadata", "Metadatos", "元数据", "मेटाडेटा", "بيانات وصفية", "Metadados", "Métadonnées", "Metadaten", "メタデータ"],
+  "SEO titles, descriptions, hashtags, chapter timecodes, and cover thumbnail.": ["SEO-заголовки, описания, хештеги, таймкоды глав и обложка.","SEO titles, descriptions, hashtags, chapter timecodes, and cover thumbnail.","Títulos SEO, descripciones, hashtags, timecodes de capítulos y miniatura.","SEO 标题、描述、话题标签、章节时间码和封面。","SEO शीर्षक, विवरण, हैशटैग, चैप्टर टाइमकोड और कवर थंबनेल।","عناوين SEO، أوصاف، هاشتاغات، طوابع الفصول، وصورة الغلاف.","Títulos SEO, descrições, hashtags, timecodes de capítulos e capa.","Titres SEO, descriptions, hashtags, timecodes de chapitres et miniature.","SEO-Titel, Beschreibungen, Hashtags, Kapitel-Timecodes und Cover-Bild.","SEOタイトル、説明、ハッシュタグ、チャプターのタイムコード、サムネイル。"],
+  "Publish": ["Публикация", "Publish", "Publicar", "发布", "प्रकाशित", "نشر", "Publicar", "Publier", "Veröffentlichen", "公開"],
+  "Multi-channel publishing, OAuth credential rotation, scheduling, and upload automation.": ["Публикация на несколько каналов, ротация OAuth-креденшелов, планирование и автозагрузка.","Multi-channel publishing, OAuth credential rotation, scheduling, and upload automation.","Publicación multicanal, rotación de credenciales OAuth, programación y subida automática.","多频道发布、OAuth 凭证轮换、定时与自动上传。","मल्टी-चैनल प्रकाशन, OAuth क्रेडेंशियल रोटेशन, शेड्यूलिंग और अपलॉड ऑटोमेशन।","النشر متعدد القنوات، تدوير بيانات OAuth، الجدولة، والرفع التلقائي.","Publicação multicanal, rotação de credenciais OAuth, agendamento e upload automático.","Publication multichaîne, rotation des identifiants OAuth, planification et upload automatique.","Multi-Channel-Publishing, OAuth-credential-Rotation, Planung und Upload-Automatisierung.","マルチチャネル公開、OAuth資格情報のローテーション、スケジュールと自動アップロード。"],
+  "Ориентир объёма, а не жёсткая рамка: конвейер подгоняет длительность под содержание, итог может отличаться от числа. Можно оставить как есть.": ["Ориентир объёма, а не жёсткая рамка: конвейер подгоняет длительность под содержание, итог может отличаться от числа. Можно оставить как есть.","A volume target, not a hard limit: the pipeline fits the runtime to the content, the result may differ from the number. Safe to leave as is.","Una referencia de duración, no un límite estricto: el pipeline ajusta la duración al contenido; el resultado puede diferir. Puedes dejarlo tal cual.","这是时长参考而非硬性限制：流水线会根据内容调整时长，最终结果可能与数字不同。保持默认即可。","यह अवधि का अनुमान है, सख्त सीमा नहीं: पाइपलाइन सामग्री के अनुसार अवधि तय करती है, परिणाम अलग हो सकता है। इसे ऐसे ही छोड़ दें।","مرجع للمدة وليس حدًا صارمًا: يضبط خط الإنتاج المدة حسب المحتوى، وقد تختلف النتيجة عن الرقم. يمكن تركه كما هو.","Uma referência de duração, não um limite rígido: o pipeline ajusta a duração ao conteúdo; o resultado pode diferir do número. Pode deixar como está.","Une cible de durée, pas une limite stricte : le pipeline adapte la durée au contenu, le résultat peut différer du chiffre. Laissez tel quel.","Eine Längsvorgabe, kein hartes Limit: Die Pipeline passt die Laufzeit an den Inhalt an, das Ergebnis kann abweichen. Kann bleiben wie es ist.","長さの目安であり厳密な制限ではありません：パイプラインが内容に合わせて長さを調整するため、結果は数値と異なることがあります。既定のままで構いません。"],
+  "Итоговая длительность зависит от содержания.": ["Итоговая длительность зависит от содержания.","Final runtime depends on the content.","La duración final depende del contenido.","最终时长取决于内容。","अंतिम अवधि सामग्री पर निर्भर करती है।","تعتمد المدة النهائية على المحتوى.","A duração final depende do conteúdo.","La durée finale dépend du contenu.","Die finale Laufzeit hängt vom Inhalt ab.","最終的な長さは内容によります。"],
   "Вставь готовый текст или загрузи файл .txt, .srt. Если оставить пустым, нейросеть напишет сценарий сама.": ["Вставь готовый текст или загрузи файл .txt, .srt. Если оставить пустым, нейросеть напишет сценарий сама.","Paste a ready script or upload .txt/.srt. Leave empty and the AI writes it.","Pega un guion listo o sube .txt/.srt. Si lo dejas vacío, la IA lo escribe.","粘贴现成脚本或上传 .txt/.srt。留空则 AI 自动写。","तैयार स्क्रिप्ट पेस्ट करें या .txt/.srt अपलोड करें। खाली छोड़ें तो AI लिखेगा।","الصق نصًا جاهزًا أو ارفع .txt/.srt. اتركه فارغًا وستكتبه الذكاء الاصطناعي.","Cole um roteiro pronto ou envie .txt/.srt. Vazio — a IA escreve.","Colle un script prêt ou téléverse un .txt/.srt. Vide — l'IA l'écrit.","Fertiges Skript einfügen oder .txt/.srt hochladen. Leer lassen — die KI schreibt es.","既存スクリプトを貼るか .txt/.srt をアップロード。空欄ならAIが執筆。"],
-  "Акценты, персонажи, эпоха, запретные темы или стиль повествования.": ["Акценты, персонажи, эпоха, запретные темы или стиль повествования.","Accents, characters, era, taboo topics or narration style.","Énfasis, personajes, época, temas prohibidos o estilo narrativo.","重点、人物、时代、禁忌话题或叙事风格。","ज़ोर, पात्र, युग, निषिद्ध विषय या कथन शैली।","التركيزات والشخصيات والحقبة والمواضيع المحظورة أو أسلوب السرد.","Ênfases, personagens, época, temas proibidos ou estilo da narração.","Accents, personnages, époque, sujets interdits ou style narratif.","Schwerpunkte, Figuren, Epoche, Tabuthemen oder Erzählstil.","重点、登場人物、時代、避ける話題、語りのスタイル。"],
   "Формат задаёт стиль картинок, темп озвучки, частоту смены кадров и музыку.": ["Формат задаёт стиль картинок, темп озвучки, частоту смены кадров и музыку.","Format defines image style, voice tempo, scene change rate and music.","El formato define estilo de imágenes, ritmo de voz, cambios de escena y música.","格式决定图片风格、语速、换镜频率和音乐。","फ़ॉर्मेट इमेज शैली, वॉइस गति, सीन बदलाव और संगीत तय करता है।","الصيغة تحدد أسلوب الصور وسرعة الصوت وتغيّر المشاهد والموسيقى.","O formato define estilo das imagens, ritmo da voz, troca de cenas e música.","Le format définit le style d'images, le rythme vocal, les changements de scène et la musique.","Das Format legt Bildstil, Sprechtempo, Szenenwechsel und Musik fest.","フォーマットは画像スタイル・音声速度・場面転換・音楽を決定。"],
   "Стилевой пресет промптов и негативов для предотвращения нейрослопа.": ["Стилевой пресет промптов и негативов для предотвращения нейрослопа.","Style preset of prompts and negatives against AI-slop.","Presets de prompts y negativos contra el slop.","防 AI 劣质的提示词与负面词预设。","AI-स्लॉप रोकने हेतु प्रॉम्प्ट/निगेटिव प्रीसेट।","نمط جاهز من البرومبتات والسلبيات ضد إخفاق الذكاء الاصطناعي.","Preset de prompts e negativos contra lixo de IA.","Preset de prompts et négatifs anti-slop IA.","Stil-Presets gegen KI-Müll.","AIスロップ防止のプロンプト/ネガティブpreset。"],
   "Выбор движков для каждого этапа. «по умолч.» использует настроенные параметры.": ["Выбор движков для каждого этапа. «по умолч.» использует настроенные параметры.","Pick engines per stage. Default uses configured ones.","Elige motores por etapa. Por defecto usa los configurados.","每阶段选择引擎。默认用已配置项。","हर चरण हेतु इंजन। डिफ़ॉल्ट कॉन्फ़िगर का उपयोग करता है।","اختر المحرك لكل مرحلة. الافتراضي يستخدم المضبوط.","Escolha motores por etapa. Padrão usa o configurado.","Choisis les moteurs par étape. Défaut = configuré.","Engines pro Stufe wählen. Standard nutzt Konfiguration.","段階ごとにエンジンを選択。既定は設定済みを使用。"],
@@ -864,9 +901,7 @@ const DICT = {
   "Успешно экспортировано в": ["Успешно экспортировано в", "Exported successfully to", "Exportado con éxito a", "成功导出到", "सफलतापूर्वक एक्सपोर्ट हुआ", "تم التصدير بنجاح إلى", "Exportado com sucesso para", "Exporté avec succès vers", "Erfolgreich exportiert nach", "正常にエクスポートされました："],
   "Ошибка экспорта: ": ["Ошибка экспорта: ", "Export error: ", "Error de exportación: ", "导出错误：", "एक्सपोर्ट त्रुटि: ", "خطأ التصدير: ", "Erro de exportação: ", "Erreur d'export : ", "Export-Fehler: ", "エクスポートエラー："],
   "не удалось экспортировать": ["не удалось экспортировать", "could not export", "no se pudo exportar", "无法导出", "एक्सपोर्ट नहीं हो सका", "تعذر التصدير", "não foi possível exportar", "impossible d'exporter", "Export nicht möglich", "エクスポートできませんでした"],
-  "Например: Ночной дозор на стене Адриана": ["Например: Ночной дозор на стене Адриана", "e.g. Night watch on Hadrian's Wall", "P. ej.: Guardia nocturna en el muro de Adriano", "例如：哈德良长城上的夜间守望", "जैसे: एड्रियन की दीवार पर रात की चौकी", "مثال: الحراسة الليلية على سور هادريان", "Ex.: Vigília noturna na Muralha de Adriano", "Ex. : Veille de nuit sur le mur d'Hadrien", "z. B. Nachtwache am Hadrianswall", "例：ハドリアヌスの壁の夜警"],
   "Вставь готовый текст (любой длины) или нажми 'Загрузить файл'…": ["Вставь готовый текст (любой длины) или нажми 'Загрузить файл'…", "Paste ready text (any length) or click 'Upload file'…", "Pega texto listo (cualquier longitud) o pulsa «Subir archivo»…", "粘贴现成文本（任意长度）或点「上传文件」…", "तैयार टेक्स्ट पेस्ट करें (कोई भी लंबाई) या 'फ़ाइल अपलोड' दबाएँ…", "الصق نصًا جاهزًا (أي طول) أو اضغط «رفع ملف»…", "Cole texto pronto (qualquer tamanho) ou clique «Enviar arquivo»…", "Colle un texte prêt (toute longueur) ou clique «Télécharger un fichier»…", "Fertigen Text einfügen (beliebige Länge) oder auf „Datei hochladen\" klicken…", "既成テキストを貼り付け（任意の長さ）か「ファイルをアップ」を押す…"],
-  "Например: спокойный размеренный тон, акцент на архивную атмосферу 35мм, без громких звуков...": ["Например: спокойный размеренный тон, акцент на архивную атмосферу 35мм, без громких звуков...", "e.g. calm measured tone, archival 35mm feel, no loud sounds...", "P. ej.: tono sereno, atmósfera de archivo 35mm, sin sonidos fuertes...", "例如：平稳舒缓的语调、35mm 档案氛围、无巨响…", "जैसे: शांत धीमा लहजा, 35mm संग्रह माहौल, तेज़ आवाज़ें नहीं...", "مثال: نبرة هادئة، أجواء أرشيف 35mm، بدون أصوات عالية...", "Ex.: tom calmo, atmosfera de arquivo 35mm, sem sons altos...", "Ex. : ton calme, ambiance archive 35mm, sans sons forts...", "z. B. ruhiger Ton, 35mm-Archiv-Atmosphäre, keine lauten Geräusche...", "例：落ち着いた語り、35mmアーカイブ感、大きな音なし..."],
   "Dark History (35мм плёнка, Chiaroscuro, архив)": ["Dark History (35мм плёнка, Chiaroscuro, архив)", "Dark History (35mm film, chiaroscuro, archive)", "Dark History (película 35mm, claroscuro, archivo)", "Dark History（35mm 胶片、明暗对比、档案）", "Dark History (35mm फ़िल्म, शियारोस्क्यूरो, आर्काइव)", "Dark History (فيلم 35mm، كياروسكورو، أرشيف)", "Dark History (filme 35mm, chiaroscuro, arquivo)", "Dark History (pellicule 35mm, clair-obscur, archive)", "Dark History (35mm-Film, Chiaroscuro, Archiv)", "Dark History（35mmフィルム、キアロスクーロ、アーカイブ）"],
   "Шаги (плоский вектор, минимализм)": ["Шаги (плоский вектор, минимализм)", "Steps (flat vector, minimalism)", "Pasos (vector plano, minimalismo)", "Steps（扁平矢量、极简）", "Steps (फ़्लैट वेक्टर, मिनिमलिज़्म)", "خطوات (فيكتور مسطح، بساطة)", "Passos (vetor plano, minimalismo)", "Pas (vecteur plat, minimalisme)", "Schritte (flacher Vektor, Minimalismus)", "Steps（フラットベクター、ミニマル）"],
   "Сценарий": ["Сценарий", "Script", "Guion", "脚本", "स्क्रिप्ट", "السيناريو", "Roteiro", "Script", "Skript", "スクリプト"],
@@ -1206,6 +1241,7 @@ const TABS = [
   {s:'motion', k:'nav.motion', ic:ICONS.lib, grp:'grp.sys'},
   {s:'tools', k:'nav.tools', ic:ICONS.tools, grp:'grp.sys'},
   {s:'set', k:'nav.set', ic:ICONS.set},
+  {s:'guide', k:'nav.guide', ic:ICONS.lib, grp:'grp.help'},
 ];
 
 const nav = document.getElementById('nav');
@@ -1929,9 +1965,15 @@ async function newEp() {
       <div>
         <div class="lbl">
           ${t('ne.topic')}
-          <span class="info-tip" data-tip="${t('Заголовок или основная историческая тема ролика.')}">?</span>
+          <span class="info-tip" data-tip="${t('Тема ролика — о чём будет история.')}">?</span>
         </div>
-        <input id="n-topic" placeholder="${t('Например: Ночной дозор на стене Адриана')}">
+        <input id="n-topic" placeholder="${t('Например: Почему маяки до сих пор важны')}">
+
+        <div class="lbl" style="margin-top:12px">
+          ${t('ne.notes')}
+          <span class="info-tip" data-tip="${t('Запрос к нейросети: опиши, чего хочешь от сценария — подача, тон, структура, аудитория, что точно НЕ трогать. Сценарий пишется по этому запросу.')}">?</span>
+        </div>
+        <textarea id="n-notes" rows="4" placeholder="${t('Например: спокойный размеренный тон, термины объясняй простыми словами, без громких звуков и кликбейта...')}"></textarea>
 
         <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px">
           <div class="lbl" style="margin:0">
@@ -1949,18 +1991,12 @@ async function newEp() {
 
         <textarea id="n-own" rows="14" placeholder="${t('Вставь готовый текст (любой длины) или нажми \'Загрузить файл\'…')}"></textarea>
         <div id="n-script-info" class="muted" style="font-size:11.5px;margin-bottom:14px">${t('Сценарий не задан — сгенерируется нейросетью.')}</div>
-
-        <div class="lbl">
-          ${t('ne.notes')}
-          <span class="info-tip" data-tip="${t('Акценты, персонажи, эпоха, запретные темы или стиль повествования.')}">?</span>
-        </div>
-        <textarea id="n-notes" rows="4" placeholder="${t('Например: спокойный размеренный тон, акцент на архивную атмосферу 35мм, без громких звуков...')}"></textarea>
       </div>
 
       <!-- Right Column: Settings & Providers -->
       <div>
-        <div class="row2" style="align-items:flex-end">
-          <div style="flex:2.2">
+        <div class="row2" style="align-items:start">
+          <div>
             <div class="lbl">
               ${t('ne.format')}
               <span class="info-tip" data-tip="${t('Формат задаёт стиль картинок, темп озвучки, частоту смены кадров и музыку.')}">?</span>
@@ -1968,9 +2004,13 @@ async function newEp() {
             <select id="n-format" style="margin-bottom:0"></select>
             <button class="btn btn-secondary btn-sm" id="n-fmt-setup" style="width:100%;margin-top:8px">${t('ne.setup.fmt')}</button>
           </div>
-          <div style="flex:1;max-width:150px">
-            <div class="lbl">${t('ne.dur')}</div>
+          <div>
+            <div class="lbl">
+              ${t('ne.dur')}
+              <span class="info-tip" data-tip="${t('Ориентир объёма, а не жёсткая рамка: конвейер подгоняет длительность под содержание, итог может отличаться от числа. Можно оставить как есть.')}">?</span>
+            </div>
             <input id="n-min" type="number" value="1" min="1" max="120" style="margin-bottom:0">
+            <div class="muted" style="font-size:10.5px;margin-top:8px;min-height:30px">${t('необязательно')} · ${t('Итоговая длительность зависит от содержания.')}</div>
           </div>
         </div>
         <div class="lbl" style="margin-top:14px">${t('ne.lang')}</div>
@@ -2285,6 +2325,14 @@ async function newEp() {
         <div class="card" style="width:min(680px,92vw);max-height:88vh;overflow:auto">
           <h3>${t('Настройка стиля')} «${t(p.name || cur)}»</h3>
           <div class="muted" style="margin-bottom:10px">${t('Пресет промптов генератора картинок: стиль, негативы, теги качества. JSON загрузится ниже — правь значения и сохраняй. Ключ = имя пресета.')}</div>
+          <div class="lbl">${t('Соавтор стиля (ИИ)')}
+            <span class="info-tip" data-tip="${t('Опиши желаемый вид картинок своими словами — нейросеть соберёт готовый пресет, а ты решишь, добавлять его или попросить другой вариант.')}">?</span>
+          </div>
+          <div id="vp-chat" style="font-size:11.5px;max-height:180px;overflow-y:auto;margin:6px 0 8px;display:flex;flex-direction:column;gap:8px"></div>
+          <div style="display:flex;gap:6px;margin-bottom:12px">
+            <input id="vp-ai-desc" placeholder="${t('Опиши стиль: свет, палитра, фактуры, настроение…')}" style="margin:0">
+            <button class="btn btn-secondary btn-sm" id="vp-ai-go" style="white-space:nowrap">${t('Сгенерировать')}</button>
+          </div>
           <input id="vp-key" placeholder="${t('ключ пресета (напр. noir_35mm)')}" value="${cur}">
           <textarea id="vp-json" rows="14" style="width:100%;font-family:var(--mono);font-size:11.5px"></textarea>
           <div style="display:flex;gap:10px;margin-top:10px">
@@ -2295,6 +2343,37 @@ async function newEp() {
       document.body.appendChild(modal);
       modal.querySelector('#vp-json').value = JSON.stringify(p, null, 2);
       modal.querySelector('#vp-close').onclick = () => modal.remove();
+      // AI co-author chat: describe the look -> LLM drafts the preset -> author decides
+      const chat = modal.querySelector('#vp-chat');
+      const chatMsg = (html) => { const d = document.createElement('div'); d.innerHTML = html; chat.appendChild(d); chat.scrollTop = chat.scrollHeight; return d; };
+      modal.querySelector('#vp-ai-go').onclick = async () => {
+        const btn = modal.querySelector('#vp-ai-go');
+        const desc = modal.querySelector('#vp-ai-desc').value.trim();
+        if (!desc) return;
+        btn.disabled = true;
+        const m = chatMsg('<span class="muted">' + t('генерация…') + '</span>');
+        try {
+          const r = await api('/api/visual_preset/ai_generate', {method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({description: desc, language: LANG})});
+          if (!r.ok || !r.preset) throw new Error(r.error || t('ошибка'));
+          const pr = r.preset;
+          m.innerHTML = '<b>' + esc(pr.name) + '</b> <span class="muted">— ' + esc(pr.description || '') + '</span>' +
+            '<div class="muted" style="font-size:10.5px;margin:3px 0">' + esc(pr.style_prompt) + '</div>' +
+            '<div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm vp-add">' + t('Добавить пресет') + '</button>' +
+            '<button class="btn btn-ghost btn-sm vp-more">' + t('Ещё вариант') + '</button></div>';
+          m.querySelector('.vp-add').onclick = () => {
+            const slug = (pr.name || 'ai_style').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'ai_style';
+            modal.querySelector('#vp-key').value = slug;
+            modal.querySelector('#vp-json').value = JSON.stringify(pr, null, 2);
+            modal.querySelector('#vp-save').click();
+            m.querySelector('.vp-add').disabled = true;
+          };
+          m.querySelector('.vp-more').onclick = () => modal.querySelector('#vp-ai-go').click();
+        } catch (e) {
+          m.innerHTML = '<span class="muted">' + esc(String(e.message || e)) + '</span>';
+        }
+        btn.disabled = false;
+      };
       modal.querySelector('#vp-save').onclick = async () => {
         let parsed;
         try { parsed = JSON.parse(modal.querySelector('#vp-json').value); }
@@ -2611,12 +2690,12 @@ async function lib() {
     </div>
   </div>`);
   const tpTable = tc.querySelector('table');
-  for (const t of st.topics || []) {
+  for (const tp of st.topics || []) {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="padding:8px 6px"><b>${esc(t.title)}</b></td><td><span class="tag">${t.status}</span></td>
+    tr.innerHTML = `<td style="padding:8px 6px"><b>${esc(tp.title)}</b></td><td><span class="tag">${tp.status}</span></td>
       <td style="text-align:right;white-space:nowrap">
-        <button class="btn btn-secondary btn-sm" data-new="${t.id}" title="${t('создать выпуск с этой темой')}">→ Выпуск</button>
-        <button class="btn btn-ghost btn-sm" data-id="${t.id}" data-st="${t.status==='idea'?'used':'idea'}">${t.status==='idea'?t('В работу'):t('Идея')}</button></td>`;
+        <button class="btn btn-secondary btn-sm" data-new="${tp.id}" title="${t('создать выпуск с этой темой')}">→ Выпуск</button>
+        <button class="btn btn-ghost btn-sm" data-id="${tp.id}" data-st="${tp.status==='idea'?'used':'idea'}">${tp.status==='idea'?t('В работу'):t('Идея')}</button></td>`;
     tr.querySelector('[data-id]').onclick = async (e) => {
       await api('/api/topics/status', {method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({id: e.currentTarget.dataset.id, status: e.currentTarget.dataset.st})});
@@ -2624,7 +2703,7 @@ async function lib() {
     };
     tr.querySelector('[data-new]').onclick = (e) => {
       e.stopPropagation();
-      S.prefillTopic = t.title;
+      S.prefillTopic = tp.title;
       show('new', true);
       toast(t('тема подставлена в форму выпуска'), 'ok');
     };
@@ -3478,7 +3557,7 @@ async function settings() {
       '<div style="display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line)">' +
       '<b style="min-width:110px">' + t(md.name) + '</b>' +
       '<span class="tag">' + md.provider_type + '</span>' +
-      '<span class="muted" style="font-size:11.5px">' + esc(md.description || '') + '</span></div>'
+      '<span class="muted" style="font-size:11.5px">' + t(md.description || '') + '</span></div>'
     ).join('');
   });
 
@@ -3699,7 +3778,74 @@ window.testSingleProv = async (pid, btn) => {
 // ==========================================
 // 8. ROUTER
 // ==========================================
-const views = {home: dashHome, dash, new: newEp, cover: coverTab, lib, tools, notes: notesTab, set: settings, studio: studioTab, voices: voicesTab, motion: motionTab};
+// ==========================================
+// 8b. GUIDE / FAQ — how to use the product (owner request: left-bar help)
+// ==========================================
+function guide(){
+  const m = document.createElement('div');
+  m.appendChild(el(`<div class="pagehead"><div><h2>${t('nav.guide')}</h2><p>${t('guide.sub')}</p></div></div>`));
+  const sect = (title, body) => {
+    const c = el(`<div class="card" style="margin-bottom:16px"><h3>${title}</h3>${body}</div>`);
+    m.appendChild(c);
+  };
+  const ru = (s) => `<div>${s}</div>`;
+  const en = (s) => `<div class="muted" style="margin-top:6px">${s}</div>`;
+
+  sect(t('guide.install.t'),
+    ru('<b>Нет, не через exe.</b> Продукт ставится из исходников: <code>git clone</code> репозитория → ' +
+       '<code>pip install -e "pipeline[desktop]"</code> (нужны Python 3.11+, FFmpeg на PATH) → ' +
+       '<code>pipeline ui</code> — интерфейс откроется на http://127.0.0.1:8765. ' +
+       'Проверка системы: <code>pipeline doctor</code>.') +
+    en('<b>No, there is no exe.</b> The product installs from source: clone the repo, ' +
+       '<code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, FFmpeg on PATH), then ' +
+       '<code>pipeline ui</code> — the studio opens at http://127.0.0.1:8765. Run <code>pipeline doctor</code> to check the system. ' +
+       'For the Web edition there is also an installer script (systemd+Caddy) and a Dockerfile — see docs/EDITIONS.md.'));
+
+  sect(t('guide.editions.t'),
+    ru('<b>Desktop</b> — локальная версия для одного владельца: без входа, локальные модели (SD, озвучка, клоны голоса), всё бесплатно и приватно. ' +
+       '<b>Web (Cloud)</b> — многопользовательская версия: вход по аккаунту, у каждого свои проекты и ключи, кредиты, очередь. Флаг в футере слева показывает, какая версия запущена.') +
+    en('<b>Desktop</b> — the local single-owner edition: no sign-in, local models (image generation, TTS, voice clones), free and private. ' +
+       '<b>Web (Cloud)</b> — the multi-user edition: accounts, per-user projects and keys, credits, a run queue. The badge in the left footer shows which edition is running.'));
+
+  sect(t('guide.episode.t'),
+    ru('<b>Тема</b> — о чём история. <b>Пожелания и пометки</b> — это твой запрос к нейросети: подача, тон, структура, аудитория, что не трогать. ' +
+       '<b>Сценарий</b> можно вставить готовым (или файлом .txt/.srt) — иначе текст напишет ИИ по теме и пожеланиям. ' +
+       '<b>Формат</b> задаёт темп смены кадров, озвучку и музыку. ' +
+       '<b>Длительность в минутах — необязательный ориентир</b>: конвейер подгоняет хронометраж под содержание, итог может отличаться от числа. ' +
+       '<b>Визуальный стиль</b> — пресет картинок; кнопка «Настроить» открывает конфигуратор и чат с ИИ-соавтором: опиши вид картинок словами — получишь готовый пресет, решишь, добавлять ли его.') +
+    en('<b>Topic</b> — what the story is about. <b>Script wishes &amp; notes</b> is your brief to the AI: delivery, tone, structure, audience, what to avoid. ' +
+       '<b>Script text</b> can be pasted (or a .txt/.srt file) — otherwise the AI writes it from the topic and your notes. ' +
+       '<b>Format</b> controls pacing, TTS and music. <b>Duration in minutes is an optional target</b> — the pipeline fits the runtime to the content, so the result may differ from the number. ' +
+       '<b>Visual style</b> — the image preset; the setup button opens the configurator with an AI co-author chat: describe the look, get a ready preset, decide whether to add it.'));
+
+  sect(t('guide.voices.t'),
+    ru('Встроенные голоса движков работают сразу. Клонирование голоса — через локальное приложение <b>VoiceStudio</b>: запусти его, сгенерируй API-ключ в его настройках и вставь в свой <code>.env</code> как <code>VOICESTUDIO_API_KEY=…</code>; затем выбери провайдера <code>voice_studio</code> в форме выпуска. Клоны создаются в самом приложении VoiceStudio. Клонировать можно только голоса, на которые у тебя есть право.') +
+    en('Built-in engine voices work out of the box. Voice cloning goes through the local <b>VoiceStudio</b> app: start it, generate an API key in its settings, put it into your <code>.env</code> as <code>VOICESTUDIO_API_KEY=…</code>, then pick the <code>voice_studio</code> provider in the episode form. Clones are created inside VoiceStudio. Only clone voices you have the rights to.'));
+
+  sect(t('guide.token.t'),
+    ru('«Access token required (UI_TOKEN from .env)» появляется, когда владелец сервера включил защиту API: в <code>.env</code> задан <code>UI_TOKEN=секрет</code> — это защита при доступе к интерфейсу из сети (не только localhost). Чтобы войти, введи тот же секрет: интерфейс попросит токен и запомнит его, либо добавь <code>?token=…</code> к ссылке. Это НЕ пароль аккаунта и не API-ключ нейросетей.') +
+    en('«Access token required (UI_TOKEN from .env)» appears when the server owner enabled API protection: <code>UI_TOKEN=secret</code> is set in <code>.env</code> — it protects the UI when it is exposed beyond localhost. Enter the same secret when the UI asks for a token (it is remembered), or append <code>?token=…</code> to the URL. It is NOT an account password and not an AI API key.'));
+
+  sect(t('guide.workers.t'),
+    ru('В Web-версии эпизод может уйти в состояние «в очереди (worker)»: его выполнит машина-воркер, подключённая к серверу (у неё свои ключи и модели), а готовое видео и артефакты вернутся в твой проект. Воркер настраивает владелец сервера (см. docs/RFC_HYBRID_WORKERS.md).') +
+    en('In the Web edition an episode may go to “queued (worker)”: a worker machine connected to the server runs it (with its own keys and models) and uploads the finished video and artifacts back to your project. Workers are set up by the server owner (see docs/RFC_HYBRID_WORKERS.md).'));
+
+  sect(t('guide.faq.t'),
+    ru('<b>Куда сохраняются видео?</b> В папке прогона: <code>runs/&lt;id&gt;/video/episode.mp4</code>; при заданном export_dir — копия в твою папку.<br>' +
+       '<b>Это бесплатно?</b> Продукт открыт (MIT) и работает у тебя локально бесплатно; платишь только своим ключам провайдеров, если пользуешься облачными API.<br>' +
+       '<b>Библиотека пустая?</b> Добавь темы и референсы — они появятся в банке тем и прикрепятся к выпускам.<br>' +
+       '<b>Можно клонировать чужой голос?</b> Нет — только свой или с явного разрешения владельца голоса.<br>' +
+       '<b>Где сменить аккаунт?</b> Клик по строке аккаунта слева внизу.') +
+    en('<b>Where are videos saved?</b> In the run folder: <code>runs/&lt;id&gt;/video/episode.mp4</code>; with export_dir set — a copy goes to your folder.<br>' +
+       '<b>Is it free?</b> The product is open source (MIT) and free to run locally; you only pay your own provider keys when using cloud APIs.<br>' +
+       '<b>Library is empty?</b> Add topics and references — they appear in the topic bank and attach to episodes.<br>' +
+       '<b>Can I clone someone else’s voice?</b> No — only your own, or with the voice owner’s explicit permission.<br>' +
+       '<b>How to switch accounts?</b> Click the account line in the bottom-left.'));
+
+  return m;
+}
+
+const views = {home: dashHome, dash, new: newEp, cover: coverTab, lib, tools, notes: notesTab, set: settings, studio: studioTab, voices: voicesTab, motion: motionTab, guide};
 const cache = {};
 async function show(name, force) {
   document.querySelectorAll('nav.side button').forEach(b => b.classList.toggle('active', b.dataset.s === name));
@@ -3873,11 +4019,11 @@ async function show(name, force) {
 (async function boot(){
   const ed = await api('/api/edition');
   S.edition = ed || {edition: 'desktop', hosted_mode: false};
+  renderEditionBadge();
   const me = await api('/api/auth/me');
   S.me = me || {hosted_mode: false, user: null};
   if (S.me.hosted_mode && !S.me.user) { renderAuthGate(); return; }
   if (S.me.user) renderUserBadge(S.me.user);
-  renderEditionBadge();
   show('home');
 })();
 
@@ -3893,15 +4039,29 @@ function renderUserBadge(u){
   const foot = document.querySelector('.side-foot.lang-foot');
   if (!foot) return;
   const d = document.createElement('div');
-  d.style.cssText = 'margin-bottom:8px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--dim)';
-  d.innerHTML = '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(u.email) +
-    ' · ✦' + (u.role === 'admin' || u.unlimited ? '∞' : Math.floor(u.credits || 0)) + '</span>' +
-    '<button class="mini" id="logout-btn">' + t('auth.signOut') + '</button>';
+  d.style.cssText = 'margin-bottom:8px;font-size:11px;color:var(--dim);position:relative';
+  const adminLink = u.role === 'admin'
+    ? '<button class="mini" id="acc-admin" style="width:100%;text-align:left">' + t('auth.admin.panel') + '</button>' : '';
+  d.innerHTML = '<button id="acc-btn" style="width:100%;text-align:left;background:none;border:none;color:inherit;font:inherit;padding:4px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px">' +
+    '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(u.email) +
+    ' · ✦' + (u.role === 'admin' || u.unlimited ? '∞' : Math.floor(u.credits || 0)) + '</span><span>▾</span></button>' +
+    '<div id="acc-menu" style="display:none;position:absolute;bottom:100%;left:0;right:0;background:var(--card,#141419);border:1px solid var(--line);border-radius:8px;padding:8px;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,0.5)">' +
+    '<div class="muted" style="font-size:10.5px;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(u.email) +
+    ' · ' + (u.role === 'admin' ? t('admin') : t('user')) +
+    ' · ✦' + (u.role === 'admin' || u.unlimited ? '∞' : Math.floor(u.credits || 0)) + '</div>' +
+    adminLink +
+    '<button class="mini" id="acc-logout" style="width:100%;text-align:left;margin-top:4px">' + t('auth.signOut') + ' / ' + t('acc.switch') + '</button>' +
+    '</div>';
   foot.parentElement.insertBefore(d, foot);
-  d.querySelector('#logout-btn').onclick = async () => {
+  const menu = d.querySelector('#acc-menu');
+  d.querySelector('#acc-btn').onclick = (e) => { e.stopPropagation(); menu.style.display = menu.style.display === 'none' ? 'block' : 'none'; };
+  document.addEventListener('click', (e) => { if (!d.contains(e.target)) menu.style.display = 'none'; }, {once: false});
+  d.querySelector('#acc-logout').onclick = async () => {
     await api('/api/auth/logout', {method:'POST', headers:{'Content-Type':'application/json'}, body: '{}'});
     location.reload();
   };
+  const adm = d.querySelector('#acc-admin');
+  if (adm) adm.onclick = () => { menu.style.display = 'none'; show('set', true); };
 }
 
 function renderAuthGate(){
