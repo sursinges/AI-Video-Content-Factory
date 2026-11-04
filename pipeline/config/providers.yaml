@@ -64,6 +64,20 @@ providers:
     output_format: mp3
     api_key_ref: SMALLEST_AI_API_KEY
 
+  # VoiceStudio (local app, AGPL-3.0) — desktop edition companion. Start the
+  # VoiceStudio app, generate an API key in its settings -> .env as
+  # VOICESTUDIO_API_KEY. Clone voices inside the VoiceStudio app and use the
+  # profile/voice id here (only voices you have the rights to).
+  voice_studio:
+    type: tts
+    adapter: voice_studio
+    base_url: http://127.0.0.1:3900
+    model: default
+    voice: alloy
+    response_format: wav
+    api_key_ref: VOICESTUDIO_API_KEY
+    timeout_sec: 300
+
   # F5-TTS Russian finetune (hotstone228, 813k steps, MIT) — owner pick for
   # live-quality narration. Voice = reference sample (5-12 s) + its transcript;
   # current reference was synthesized by Silero — replace ref_audio with a real

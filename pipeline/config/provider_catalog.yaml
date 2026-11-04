@@ -55,6 +55,15 @@ catalog:
     default_model: lightning_v3.1
     key_ref: SMALLEST_AI_API_KEY
     docs: https://smallest.ai
+  - id: voice_studio
+    name: VoiceStudio (local app — cloning, 646 languages)
+    icon: VS
+    type: tts
+    adapter: voice_studio
+    base_url: http://127.0.0.1:3900
+    default_model: default
+    key_ref: VOICESTUDIO_API_KEY
+    docs: https://github.com/debpalash/VoiceStudio
   - id: elevenlabs
     name: ElevenLabs (Expressive voice cloning)
     icon: EL

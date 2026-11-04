@@ -11,8 +11,24 @@ The platform supports local generation (optimized for GPUs with $\ge 8$ GB VRAM)
 | **XTTS v2** | 17 languages | CPML | Multilingual synthesis |
 | **Silero TTS** | Fast local CPU/GPU fallback | MIT | Rapid draft previews & testing |
 | **Fish Audio / ElevenLabs** | Universal Cloud BYOK | Commercial | Premium broadcast quality |
+| **VoiceStudio** (local app) | 646 languages | AGPL-3.0 (external app) | Cloning & voice design in a dedicated GUI |
 
 The target language of an episode is set in the manifest (`language: en`). The orchestrator automatically routes to the appropriate engine mapped in your channel profile (`tts.language_map`).
+
+### VoiceStudio (local companion app)
+
+[VoiceStudio](https://github.com/debpalash/VoiceStudio) is a separate open-source
+voice studio you run on your own machine (AGPL-3.0 — the pipeline integrates via
+its documented HTTP API only, no code is linked). Setup:
+
+1. Install and start VoiceStudio (backend on `127.0.0.1:3900`).
+2. Generate an API key in its settings → put it in your `.env`:
+   `VOICESTUDIO_API_KEY=…`.
+3. Clone/design voices inside the VoiceStudio app itself; reference them by
+   voice/profile id.
+4. Pick the `voice_studio` provider in the episode form (or set
+   `defaults.tts: voice_studio` in providers.yaml). Only clone voices you
+   have the rights to.
 
 ---
 

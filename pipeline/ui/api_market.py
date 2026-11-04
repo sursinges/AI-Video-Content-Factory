@@ -270,6 +270,72 @@ def api_visual_presets_save(body: dict):
     return {"ok": True}
 
 
+@app.post("/api/visual_preset/ai_generate")
+def api_visual_preset_ai_generate(body: dict):
+    """AI co-author for the visual style (owner request): the author describes
+    the look in a free-form chat, the LLM drafts a preset JSON, the author
+    decides whether to add it. Never writes to disk — saving stays manual."""
+    description = (body.get("description") or "").strip()
+    if len(description) < 5:
+        return JSONResponse({"error": "describe the style in a few words"}, status_code=400)
+    language = body.get("language") or "en"
+    system_prompt = (
+        "You are a prompt engineer for image generators (Stable Diffusion class). "
+        "The user describes a visual style for a video in free form. Design an image "
+        "preset for them. Reply with STRICT JSON only, no commentary:\n"
+        '{"name": "short preset name (2-4 words)", '
+        '"style_prompt": "one line, 20-40 words: style, lighting, palette, texture, composition", '
+        '"negative_prompt": "what to avoid on the images, one line", '
+        '"quality_tags": "2-4 quality tags", '
+        '"description": "1-2 sentences explaining the look in the user\'s language"}\n'
+        f"Reply in the user's language ({language}) for name/description; "
+        "style_prompt/negative_prompt/quality_tags stay in English (image models understand English best). "
+        "Never include artist names of living people, watermarks or on-image text."
+    )
+    user_prompt = f"Desired visual style:\n\"{description}\""
+
+    from core.secrets import load_env
+    from core.providers import router as router_mod
+
+    load_env_ctx()
+    provs = yaml.safe_load((config_root() / "providers.yaml").read_text(encoding="utf-8"))
+    try:
+        registry = router_mod.build_registry(provs, router_mod._resolve_secret)
+        llm_default = provs.get("defaults", {}).get("llm", "openrouter")
+        llm_prov = registry.get(f"llm/{llm_default}") or registry.get("llm/mock")
+        res = llm_prov.execute({"prompt": f"{system_prompt}\n\n{user_prompt}\nOutput valid JSON ONLY:"})
+        text = res.get("text", "")
+        import re
+
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if match:
+            data = json.loads(match.group(0))
+            preset = {
+                "name": str(data.get("name") or "AI Style")[:60],
+                "style_prompt": str(data.get("style_prompt") or "")[:600],
+                "negative_prompt": str(data.get("negative_prompt") or "")[:400],
+                "quality_tags": str(data.get("quality_tags") or "")[:200],
+                "description": str(data.get("description") or "")[:400],
+            }
+            if not preset["style_prompt"]:
+                raise ValueError("empty style_prompt")
+            return {"ok": True, "preset": preset}
+        raise ValueError("no JSON in LLM reply")
+    except Exception as e:  # noqa: BLE001 — deterministic fallback keeps the chat usable
+        words = " ".join(description.split()[:8])
+        return {
+            "ok": True,
+            "preset": {
+                "name": "AI Style",
+                "style_prompt": f"cinematic still, {words}, moody volumetric lighting, deep shadows, "
+                                "rich texture, coherent palette, 8k, sharp focus, no text",
+                "negative_prompt": "cartoon, 3d render, anime, oversaturated, neon, watermark, text, signature, bad anatomy",
+                "quality_tags": "photorealistic, 8k, sharp focus",
+                "description": f"Fallback draft (LLM notice: {e}) — edit and regenerate freely.",
+            },
+        }
+
+
 @app.get("/api/provider_catalog")
 def api_provider_catalog():
     cat = yaml.safe_load((WORKSPACE / "config" / "provider_catalog.yaml").read_text(encoding="utf-8")) or {}
