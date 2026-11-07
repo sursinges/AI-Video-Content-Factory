@@ -111,7 +111,11 @@ nav.side button.active svg { opacity: 1; color: var(--accent); }
   background: var(--ok); margin-right: 7px;
   animation: pulseDot 2.4s ease-in-out infinite;
 }
-.lang-foot { padding: 0 16px 14px; margin-top: 8px; }
+.lang-foot {
+  padding: 10px 16px 12px; border-top: 1px solid var(--line);
+  display: flex; align-items: center;
+}
+.lang-foot select { height: 34px; }
 .side-search { padding: 8px 12px 0; }
 .side-search input { margin: 0; font-size: 12px; padding: 7px 10px; }
 .search-results { padding: 2px 12px; max-height: 230px; overflow-y: auto; }
@@ -683,6 +687,13 @@ const DICT = {
   "Добавить пресет": ["Добавить пресет","Add preset","Añadir preset","添加预设","प्रीसेट जोड़ें","أضف الإعداد","Adicionar preset","Ajouter le preset","Preset hinzufügen","プリセットを追加"],
   "Ещё вариант": ["Ещё вариант","Another take","Otra versión","再来一版","एक और विकल्प","نسخة أخرى","Outra versão","Une autre version","Noch eine Variante","別の案"],
   "генерация…": ["генерация…","generating…","generando…","生成中…","जनरेट हो रहा है…","جارٍ التوليد…","gerando…","génération…","generiere…","生成中…"],
+  "Превью сцены": ["Превью сцены","Scene preview","Vista previa de escena","场景预览","सीन प्रीव्यू","معاينة المشهد","Prévia da cena","Aperçu de la scène","Szenen-Vorschau","シーンプレビュー"],
+  "Рендерю превью сцены…": ["Рендерю превью сцены…","Rendering scene preview…","Renderizando vista previa…","正在渲染场景预览…","सीन प्रीव्यू रेंडर हो रहा है…","جارٍ رندر معاينة المشهد…","Renderizando prévia da cena…","Rendu de l'aperçu de la scène…","Rendere Szenen-Vorschau…","シーンプレビューをレンダリング中…"],
+  "Превью готово ↓": ["Превью готово ↓","Preview ready ↓","Vista previa lista ↓","预览已就绪 ↓","प्रीव्यू तैयार ↓","المعاينة جاهزة ↓","Prévia pronta ↓","Aperçu prêt ↓","Vorschau fertig ↓","プレビュー完了 ↓"],
+  "черновое качество — финал рендерится в сборке": ["черновое качество — финал рендерится в сборке","draft quality — the final renders in assembly","calidad borrador — el final se renderiza en el montaje","草稿画质——最终版在合成中渲染","ड्राफ्ट क्वालिटी — फ़ाइनल असेंबली में रेंडर होता है","جودة مسودة — النهائي يُرندر في التجميع","qualidade rascunho — o final renderiza na montagem","qualité brouillon — le final se rend dans le montage","Entwurfsqualität — das Finale rendert in der Montage","ドラフト品質——最終版は編集でレンダリングされます"],
+  "подключено": ["подключено","connected","conectado","已连接","कनेक्टेड","متصل","conectado","connecté","verbunden","接続済み"],
+  "не настроено": ["не настроено","not configured","no configurado","未配置","कॉन्फ़िगर नहीं","غير مهيأ","não configurado","non configuré","nicht konfiguriert","未設定"],
+  "движок:": ["движок:","engine:","motor:","引擎：","इंजन:","المحرك:","motor:","moteur :","Engine:","エンジン:"],
   "nav.guide": ["Гайд и FAQ","Guide & FAQ","Guía y FAQ","指南与FAQ","गाइड और FAQ","دليل وأسئلة","Guia e FAQ","Guide et FAQ","Anleitung & FAQ","ガイドとFAQ"],
   "grp.help": ["Помощь","Help","Ayuda","帮助","सहायता","مساعدة","Ajuda","Aide","Hilfe","ヘルプ"],
   "guide.sub": ["Как пользоваться продуктом: установка, версии, частые вопросы.","How to use the product: setup, editions, common questions.","Cómo usar el producto: instalación, ediciones, preguntas frecuentes.","如何使用本产品：安装、版本、常见问题。","उत्पाद का उपयोग कैसे करें: सेटअप, संस्करण, सामान्य प्रश्न।","كيفية استخدام المنتج: التثبيت والإصدارات والأسئلة الشائعة.","Como usar o produto: instalação, edições, perguntas frequentes.","Comment utiliser le produit : installation, éditions, questions fréquentes.","So verwendest du das Produkt: Setup, Editionen, häufige Fragen.","製品の使い方：セットアップ、エディション、よくある質問。"],
@@ -1741,9 +1752,10 @@ async function viewStudio(runId) {
         <div class="lbl">${t('Промпт картинки (или пожелание по изменению)')}</div>
         <textarea id="ins-prompt" rows="3" placeholder="${t('Опиши, что изменить (например: добавить ночной дождь и отблески факелов на шлеме)...')}"></textarea>
 
-        <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+        <div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap">
           <button class="btn btn-secondary" id="ins-ai-enhance"> ${t('Доработать промпт с ИИ')}</button>
           <button class="btn btn-primary" id="ins-apply-btn"> ${t('Пересобрать кадр и видео')}</button>
+          <button class="btn btn-secondary" id="ins-preview-btn">▶ ${t('Превью сцены')}</button>
           <span id="ins-status" class="muted" style="margin-left:8px"></span>
         </div>
         <div id="ins-rationale" style="display:none;background:#090b12;border:1px solid #1e2538;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#93c5fd"></div>
@@ -1856,9 +1868,39 @@ async function viewStudio(runId) {
     }
   };
 
+  // Per-scene video preview (owner request): render just this scene and play it
+  inspectorCard.querySelector('#ins-preview-btn').onclick = async () => {
+    const btn = inspectorCard.querySelector('#ins-preview-btn');
+    const st = inspectorCard.querySelector('#ins-status');
+    const sc = scenes[S.selectedScene];
+    if (!sc) return;
+    btn.disabled = true;
+    st.textContent = t('Рендерю превью сцены…'); st.style.color = 'var(--accent-dim)';
+    const res = await api(`/api/run/${runId}/preview_scene`, {method:'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({scene_index: S.selectedScene})});
+    btn.disabled = false;
+    if (res.ok && res.url) {
+      st.textContent = ' ' + t('Превью готово ↓'); st.style.color = '#34d399';
+      const modal = el(`<div style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center" id="pv-modal">
+        <div class="card" style="width:min(860px,94vw)">
+          <h3>${t('Превью сцены')} #${sc.index} <span class="muted" style="font-size:11.5px">(${t('черновое качество — финал рендерится в сборке')})</span></h3>
+          <video src="${res.url}" controls autoplay style="width:100%;border-radius:8px;border:1px solid var(--line)"></video>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <button class="btn btn-secondary btn-sm" id="pv-close">${t('Закрыть')}</button>
+            <a class="btn btn-ghost btn-sm" href="${res.url}" download>${t('Скачать')}</a>
+          </div>
+        </div></div>`);
+      document.body.appendChild(modal);
+      modal.querySelector('#pv-close').onclick = () => { modal.querySelector('video').pause(); modal.remove(); };
+      modal.onclick = (e) => { if (e.target === modal) { modal.querySelector('video').pause(); modal.remove(); } };
+    } else {
+      st.textContent = t('Ошибка: ') + (res.error || t('не удалось')); st.style.color = '#f87171';
+    }
+  };
+
   // Selective re-render scene button handler
-  inspectorCard.querySelector('#ins-apply-btn').onclick = async () => {
-    const btn = inspectorCard.querySelector('#ins-apply-btn');
+  inspectorCard.querySelector('#ins-apply-btn').onclick = async () => {    const btn = inspectorCard.querySelector('#ins-apply-btn');
     const st = inspectorCard.querySelector('#ins-status');
     const sc = scenes[S.selectedScene];
     if (!sc) return;
@@ -3070,6 +3112,18 @@ async function voicesTab() {
       <p class="muted">${t('Клонирование голоса запускается на GPU хоста. На облачном тарифе эта вкладка пока закрыта — озвучка уже работает со встроенными голосами движков.')}</p></div>`));
     return m;
   }
+  // VoiceStudio (local companion app, AGPL) — surfaced per owner request
+  api('/api/provider_catalog').then(cat => {
+    const vs = (cat.catalog || []).find(x => x.id === 'voice_studio');
+    if (!vs) return;
+    const card = el(`<div class="card" style="margin-bottom:16px;border-color:var(--accent-dim)">
+      <h3>VoiceStudio <span class="tag">${vs.connected ? t('подключено') : t('не настроено')}</span></h3>
+      <div class="hint">${t('Локальное open-source приложение для клонирования и дизайна голоса (646 языков). Как подключить: 1) установи и запусти VoiceStudio; 2) сгенерируй API-ключ в его настройках; 3) добавь его в свой .env как VOICESTUDIO_API_KEY=…; 4) выбери провайдера voice_studio в форме выпуска. Клоны создавай в самом приложении — здесь они выбираются по id голоса.')}</div>
+      <a class="btn btn-ghost btn-sm" href="${vs.docs}" target="_blank">GitHub ↗</a>
+      <span class="muted" style="margin-left:8px">${t('движок:')}: 127.0.0.1:3900 · /v1/audio/speech</span>
+    </div>`);
+    m.insertBefore(card, m.children[1] || null);
+  });
   const grid = el(`<div class="grid">
     <div class="card" style="max-width:460px"><h3>${t('vo.new')}</h3>
       <div class="hint" style="margin-bottom:12px">${t('Клонирование работает локально: запиши 10–15 секунд чистой речи, впиши дословный текст — клон будет доступен во всех языках озвучки.')}</div>
@@ -3781,66 +3835,115 @@ window.testSingleProv = async (pid, btn) => {
 // ==========================================
 // 8b. GUIDE / FAQ — how to use the product (owner request: left-bar help)
 // ==========================================
+const GUIDE = {
+  ru: {
+    install: '<b>Нет, не через exe.</b> Продукт ставится из исходников: <code>git clone</code> репозитория → <code>pip install -e "pipeline[desktop]"</code> (нужны Python 3.11+, FFmpeg на PATH) → <code>pipeline ui</code> — интерфейс откроется на http://127.0.0.1:8765. Проверка системы: <code>pipeline doctor</code>. Для Web-версии есть install.sh (systemd+Caddy) и Dockerfile — см. docs/EDITIONS.md.',
+    editions: '<b>Desktop</b> — локальная версия для одного владельца: без входа, локальные модели (SD, озвучка, клоны голоса), всё бесплатно и приватно. <b>Web (Cloud)</b> — многопользовательская версия: вход по аккаунту, у каждого свои проекты и ключи, кредиты, очередь. Флаг в футере слева показывает, какая версия запущена.',
+    episode: '<b>Тема</b> — о чём история. <b>Пожелания и пометки</b> — это твой запрос к нейросети: подача, тон, структура, аудитория, что не трогать. <b>Сценарий</b> можно вставить готовым (или файлом .txt/.srt) — иначе текст напишет ИИ по теме и пожеланиям. <b>Формат</b> задаёт темп смены кадров, озвучку и музыку. <b>Длительность в минутах — необязательный ориентир</b>: конвейер подгоняет хронометраж под содержание, итог может отличаться от числа. <b>Визуальный стиль</b> — пресет картинок; кнопка «Настроить» открывает конфигуратор и чат с ИИ-соавтором. <b>Превью сцены</b> — кнопка ▶ в раскадровке рендерит только эту сцену и показывает плеер, без пересборки всего ролика.',
+    voices: 'Встроенные голоса движков работают сразу. Клонирование голоса — через локальное приложение <b>VoiceStudio</b>: запусти его, сгенерируй API-ключ в его настройках и вставь в свой <code>.env</code> как <code>VOICESTUDIO_API_KEY=…</code>; затем выбери провайдера <code>voice_studio</code> в форме выпуска. Клоны создаются в самом приложении VoiceStudio. Клонировать можно только голоса, на которые у тебя есть право.',
+    token: '«Access token required (UI_TOKEN from .env)» появляется, когда владелец сервера включил защиту API: в <code>.env</code> задан <code>UI_TOKEN=секрет</code> — защита при доступе к интерфейсу из сети. Введи тот же секрет, когда интерфейс попросит токен, либо добавь <code>?token=…</code> к ссылке. Это НЕ пароль аккаунта и не API-ключ нейросетей.',
+    workers: 'В Web-версии эпизод может уйти в состояние «в очереди (worker)»: его выполнит машина-воркер, подключённая к серверу (у неё свои ключи и модели), а готовое видео и артефакты вернутся в твой проект. Воркер настраивает владелец сервера (docs/RFC_HYBRID_WORKERS.md).',
+    faq: '<b>Куда сохраняются видео?</b> В папке прогона: <code>runs/&lt;id&gt;/video/episode.mp4</code>; при заданном export_dir — копия в твою папку.<br><b>Это бесплатно?</b> Продукт открыт (MIT) и работает локально бесплатно; платишь только своим ключам провайдеров за облачные API.<br><b>Библиотека пустая?</b> Добавь темы и референсы.<br><b>Можно клонировать чужой голос?</b> Нет — только свой или с явного разрешения владельца голоса.<br><b>Где сменить аккаунт?</b> Клик по строке аккаунта слева внизу.'
+  },
+  en: {
+    install: '<b>No, there is no exe.</b> Install from source: clone the repo → <code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, FFmpeg on PATH) → <code>pipeline ui</code> — the studio opens at http://127.0.0.1:8765. Run <code>pipeline doctor</code> to check the system. The Web edition also ships an installer (systemd+Caddy) and a Dockerfile — see docs/EDITIONS.md.',
+    editions: '<b>Desktop</b> — the local single-owner edition: no sign-in, local models (image generation, TTS, voice clones), free and private. <b>Web (Cloud)</b> — the multi-user edition: accounts, per-user projects and keys, credits, a run queue. The badge in the left footer shows which edition is running.',
+    episode: '<b>Topic</b> — what the story is about. <b>Script wishes &amp; notes</b> is your brief to the AI: delivery, tone, structure, audience, what to avoid. <b>Script text</b> can be pasted (or a .txt/.srt file) — otherwise the AI writes it. <b>Format</b> controls pacing, TTS and music. <b>Duration in minutes is an optional target</b> — the runtime follows the content. <b>Visual style</b> — the image preset; the setup button opens a configurator with an AI co-author chat. <b>Scene preview</b> — the ▶ button in the storyboard renders just that scene and plays it, no full re-assembly.',
+    voices: 'Built-in engine voices work out of the box. Voice cloning goes through the local <b>VoiceStudio</b> app: start it, generate an API key in its settings, put it into your <code>.env</code> as <code>VOICESTUDIO_API_KEY=…</code>, then pick the <code>voice_studio</code> provider in the episode form. Clones are created inside VoiceStudio. Only clone voices you have the rights to.',
+    token: '«Access token required (UI_TOKEN from .env)» appears when the server owner enabled API protection: <code>UI_TOKEN=secret</code> is set in <code>.env</code>. Enter the same secret when the UI asks for a token, or append <code>?token=…</code> to the URL. It is NOT an account password and not an AI API key.',
+    workers: 'In the Web edition an episode may go to “queued (worker)”: a worker machine connected to the server runs it (with its own keys and models) and uploads the finished video and artifacts back to your project. Workers are set up by the server owner (docs/RFC_HYBRID_WORKERS.md).',
+    faq: '<b>Where are videos saved?</b> In the run folder: <code>runs/&lt;id&gt;/video/episode.mp4</code>; with export_dir set — a copy goes to your folder.<br><b>Is it free?</b> The product is open source (MIT) and free to run locally; you only pay your own provider keys for cloud APIs.<br><b>Library is empty?</b> Add topics and references.<br><b>Can I clone someone else’s voice?</b> No — only your own, or with the voice owner’s explicit permission.<br><b>How to switch accounts?</b> Click the account line in the bottom-left.'
+  },
+  es: {
+    install: '<b>No, no hay exe.</b> Se instala desde el código: clona el repositorio → <code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, FFmpeg en PATH) → <code>pipeline ui</code> — el estudio abre en http://127.0.0.1:8765. Verifica el sistema con <code>pipeline doctor</code>. La edición Web incluye instalador (systemd+Caddy) y Dockerfile — ver docs/EDITIONS.md.',
+    editions: '<b>Desktop</b> — edición local de un solo dueño: sin inicio de sesión, modelos locales (SD, TTS, clones de voz), gratis y privado. <b>Web (Cloud)</b> — edición multiusuario: cuentas, proyectos y claves por usuario, créditos, cola. La insignia del pie izquierdo muestra la edición activa.',
+    episode: '<b>Tema</b> — de qué trata la historia. <b>Deseos y notas del guion</b> es tu encargo a la IA: tono, estructura, audiencia, qué evitar. <b>Texto del guion</b> se puede pegar listo (o un .txt/.srt) — si no, la IA lo escribe. <b>Formato</b> controla ritmo, TTS y música. <b>La duración en minutos es una referencia opcional</b>: el resultado se ajusta al contenido. <b>Estilo visual</b> — preset de imágenes; el botón de configuración abre el chat con coautor IA. <b>Vista previa de escena</b> — el botón ▶ renderiza solo esa escena y la reproduce.',
+    voices: 'Las voces integradas funcionan de inmediato. La clonación va por la app local <b>VoiceStudio</b>: ábrela, genera una API-clave en sus ajustes y ponla en tu <code>.env</code> como <code>VOICESTUDIO_API_KEY=…</code>; luego elige el proveedor <code>voice_studio</code>. Los clones se crean dentro de VoiceStudio. Solo clona voces con derecho.',
+    token: '«Access token required (UI_TOKEN from .env)» aparece cuando el dueño activó la protección API: <code>UI_TOKEN=secreto</code> en <code>.env</code>. Introduce el mismo secreto cuando la UI lo pida, o añade <code>?token=…</code> a la URL. NO es la contraseña de la cuenta ni una API-key de IA.',
+    workers: 'En la edición Web un episodio puede quedar «en cola (worker)»: una máquina worker conectada al servidor lo ejecuta (con sus propias claves y modelos) y devuelve el vídeo y artefactos a tu proyecto. Lo configura el dueño del servidor (docs/RFC_HYBRID_WORKERS.md).',
+    faq: '<b>¿Dónde se guardan los vídeos?</b> En la carpeta del run: <code>runs/&lt;id&gt;/video/episode.mp4</code>; con export_dir — una copia a tu carpeta.<br><b>¿Es gratis?</b> El producto es open source (MIT) y gratis en local; solo pagas tus claves de proveedores de nube.<br><b>¿Biblioteca vacía?</b> Añade temas y referencias.<br><b>¿Clonar voz ajena?</b> No — solo la propia o con permiso explícito.<br><b>¿Cambiar de cuenta?</b> Clic en la línea de cuenta abajo a la izquierda.'
+  },
+  zh: {
+    install: '<b>不是 exe。</b>从源码安装：clone 仓库 → <code>pip install -e "pipeline[desktop]"</code>（需 Python 3.11+ 和 PATH 中的 FFmpeg）→ <code>pipeline ui</code>——界面在 http://127.0.0.1:8765。用 <code>pipeline doctor</code> 检查环境。Web 版另有 install.sh（systemd+Caddy）和 Dockerfile——见 docs/EDITIONS.md。',
+    editions: '<b>Desktop</b>——单所有者的本地版本：无需登录，本地模型（图像、配音、声音克隆），免费且私密。<b>Web（云）</b>——多用户版本：账号登录，每人独立的项目与密钥、额度、队列。左下角徽标显示当前版本。',
+    episode: '<b>主题</b>——故事讲什么。<b>脚本愿望与备注</b>是你给 AI 的任务书：叙事、语气、结构、受众、避开什么。<b>脚本正文</b>可直接粘贴（或 .txt/.srt 文件）——否则 AI 会根据主题与备注撰写。<b>格式</b>决定画面节奏、配音与音乐。<b>分钟时长只是可选参考</b>——实际时长跟随内容。<b>视觉风格</b>——图像预设；设置按钮打开带 AI 共创聊天的配置器。<b>场景预览</b>——分镜中的 ▶ 按钮只渲染该场景并播放，无需整片重拼。',
+    voices: '内置引擎语音开箱即用。声音克隆走本地应用 <b>VoiceStudio</b>：启动它，在其设置里生成 API 密钥，写入你的 <code>.env</code>：<code>VOICESTUDIO_API_KEY=…</code>；然后在表单中选择 <code>voice_studio</code> 提供方。克隆在 VoiceStudio 应用内完成。只克隆你有权利使用的声音。',
+    token: '出现「Access token required (UI_TOKEN from .env)」说明服务器所有者启用了 API 保护：<code>.env</code> 中设了 <code>UI_TOKEN=密钥</code>。在界面提示时输入同一密钥，或在 URL 后加 <code>?token=…</code>。它不是账号密码，也不是 AI 的 API 密钥。',
+    workers: 'Web 版中剧集可能进入「队列中（worker）」：由连接到服务器的 worker 机器执行（用自己的密钥与模型），成片与产物回传到你的项目。由服务器所有者配置（docs/RFC_HYBRID_WORKERS.md）。',
+    faq: '<b>视频保存在哪？</b>运行目录：<code>runs/&lt;id&gt;/video/episode.mp4</code>；设置 export_dir 后另有一份拷贝。<br><b>免费吗？</b>产品开源（MIT）且本地免费；只有用云 API 时才付你自己的密钥费用。<br><b>资料库是空的？</b>先添加主题与参考。<br><b>能克隆别人的声音吗？</b>不能——只能克隆自己的或经明确授权的。<br><b>如何切换账号？</b>点击左下角账号行。'
+  },
+  hi: {
+    install: '<b>नहीं, exe नहीं है।</b> सोर्स से इंस्टॉल करें: रिपो क्लोन करें → <code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, PATH में FFmpeg) → <code>pipeline ui</code> — इंटरफ़ेस http://127.0.0.1:8765 पर खुलेगा। सिस्टम जांच: <code>pipeline doctor</code>। Web संस्करण हेतु install.sh (systemd+Caddy) और Dockerfile — docs/EDITIONS.md देखें।',
+    editions: '<b>Desktop</b> — एक-मालिक वाला लोकल संस्करण: साइन-इन नहीं, लोकल मॉडल (SD, TTS, वॉइस क्लोन), मुफ़्त और प्राइवेट। <b>Web (Cloud)</b> — मल्टी-यूज़र संस्करण: अकाउंट, प्रति-यूज़र प्रोजेक्ट/कीज़, क्रेडिट, क़तार। बाएँ फुटर का बैज बताता है कौन-सा संस्करण चल रहा है।',
+    episode: '<b>Topic</b> — कहानी किस बारे में है। <b>Script wishes & notes</b> AI को दिया गया आपका ब्रीफ है: अंदाज़, टोन, संरचना, दर्शक, क्या न छूना। <b>Script text</b> तैयार पेस्ट कर सकते हैं (या .txt/.srt) — वरना AI लिखेगा। <b>Format</b> पेसिंग, TTS व म्यूज़िक तय करता है। <b>मिनटों में अवधि वैकल्पिक अनुमान है</b> — अंतिम अवधि सामग्री के अनुसार। <b>विज़ुअल स्टाइल</b> — इमेज प्रीसेट; सेटअप बटन AI सह-लेखक चैट खोलता है। <b>सीन प्रीव्यू</b> — स्टोरीबोर्ड का ▶ बटन केवल उसी सीन को रेंडर करके चलाता है।',
+    voices: 'इनबिल्ट इंजन वॉइस तुरंत काम करती हैं। वॉइस क्लोनिंग लोकल ऐप <b>VoiceStudio</b> से: ऐप चलाएं, उसकी सेटिंग्स में API की बनाएं, अपने <code>.env</code> में <code>VOICESTUDIO_API_KEY=…</code> डालें; फिर फ़ॉर्म में <code>voice_studio</code> प्रोवाइडर चुनें। क्लोन VoiceStudio के अंदर बनते हैं। केवल वही आवाज़ें क्लोन करें जिनका अधिकार है।',
+    token: '「Access token required (UI_TOKEN from .env)」तब आता है जब सर्वर मालिक ने API सुरक्षा चालू की हो: <code>.env</code> में <code>UI_TOKEN=सीक्रेट</code> सेट है। UI पूछे तो वही सीक्रेट डालें या URL में <code>?token=…</code> जोड़ें। यह अकाउंट पासवर्ड या AI API की नहीं है।',
+    workers: 'Web संस्करण में एपिसोड 「क़तार (worker)」 में जा सकता है: सर्वर से जुड़ी worker मशीन उसे चलाती है (अपनी कीज़/मॉडल के साथ) और तैयार वीडियो व आर्टिफैक्ट आपके प्रोजेक्ट में वापस आते हैं। सेटअप सर्वर मालिक करता है (docs/RFC_HYBRID_WORKERS.md)।',
+    faq: '<b>वीडियो कहाँ सेव होते हैं?</b> रन फ़ोल्डर में: <code>runs/&lt;id&gt;/video/episode.mp4</code>; export_dir देने पर आपकी फ़ोल्डर में कॉपी।<br><b>क्या यह मुफ़्त है?</b> प्रोडक्ट open source (MIT) है और लोकल मुफ़्त; क्लाउड API हेतु अपनी प्रोवाइडर कीज़ का खर्च।<br><b>लाइब्रेरी खाली है?</b> टॉपिक और रेफ़रेंस जोड़ें।<br><b>किसी और की आवाज़ क्लोन?</b> नहीं — अपनी या स्पष्ट अनुमति से।<br><b>अकाउंट बदलें?</b> नीचे बाएँ अकाउंट लाइन पर क्लिक करें।'
+  },
+  ar: {
+    install: '<b>لا، لا يوجد exe.</b> التثبيت من المصدر: استنسخ المستودع ← <code>pip install -e "pipeline[desktop]"</code> (بايثون 3.11+ وFFmpeg في PATH) ← <code>pipeline ui</code> — تفتح الواجهة على http://127.0.0.1:8765. للفحص: <code>pipeline doctor</code>. نسخة الويب بها install.sh (systemd+Caddy) وDockerfile — انظر docs/EDITIONS.md.',
+    editions: '<b>Desktop</b> — نسخة محلية لمالك واحد: بدون تسجيل دخول، نماذج محلية (صور، تعليق صوتي، استنساخ أصوات)، مجانية وخاصة. <b>Web (Cloud)</b> — نسخة متعددة المستخدمين: حسابات، مشاريع ومفاتيح لكل مستخدم، أرصدة، طابور. شارة أسفل اليسار تبين النسخة.',
+    episode: '<b>الموضوع</b> — عن ماذا القصة. <b>أمنيات وملاحظات السيناريو</b> هو طلبك للذكاء الاصطناعي: الأسلوب، النبرة، البنية، الجمهور، ما يجب تجنبه. <b>نص السيناريو</b> يمكن لصقه جاهزًا (أو ملف .txt/.srt) — وإلا كتبه الذكاء الاصطناعي. <b>الصيغة</b> تتحكم في الإيقاع والتعليق والموسيقى. <b>المدة بالدقائق مرجع اختياري</b> — المدة النهائية تتبع المحتوى. <b>النمط البصري</b> — إعداد الصور؛ زر الإعداد يفتح محاور الإنشاء مع مشارك AI. <b>معاينة المشهد</b> — زر ▶ في اللوحة يرندر هذا المشهد فقط ويشغله.',
+    voices: 'أصوات المحركات المدمجة تعمل فورًا. استنساخ الصوت عبر تطبيق <b>VoiceStudio</b> المحلي: شغّله، أنشئ مفتاح API من إعداداته وضعه في <code>.env</code> كـ <code>VOICESTUDIO_API_KEY=…</code>؛ ثم اختر المزود <code>voice_studio</code> في نموذج الحلقة. تُنشأ النسخ داخل تطبيق VoiceStudio. لا تستنسخ إلا الأصوات التي تملك حقها.',
+    token: 'تظهر «Access token required (UI_TOKEN from .env)» حين يفعّل مالك الخادم حماية API: <code>UI_TOKEN=سر</code> في <code>.env</code>. أدخل السر نفسه عندما تطلبه الواجهة أو أضف <code>?token=…</code> للرابط. ليس كلمة مرور الحساب ولا مفتاح AI.',
+    workers: 'في نسخة الويب قد تدخل الحلقة «في الطابور (worker)»: تنفذها آلة worker متصلة بالخادم (بمفاتيحها ونماذجها) ويعود الفيديو والملفات إلى مشروعك. يضبطها مالك الخادم (docs/RFC_HYBRID_WORKERS.md).',
+    faq: '<b>أين تُحفظ الفيديوهات؟</b> في مجلد التشغيل: <code>runs/&lt;id&gt;/video/episode.mp4</code>؛ مع export_dir نسخة إلى مجلدك.<br><b>هل هو مجاني؟</b> المنتج مفتوح (MIT) ومجاني محليًا؛ تدفع فقط مفاتيح مزوديك السحابية.<br><b>المكتبة فارغة؟</b> أضف مواضيع ومراجع.<br><b>استنساخ صوت غيرك؟</b> لا — صوتك أو بإذن صريح.<br><b>تغيير الحساب؟</b> انقر سطر الحساب أسفل اليسار.'
+  },
+  pt: {
+    install: '<b>Não, não há exe.</b> Instale do código: clone o repositório → <code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, FFmpeg no PATH) → <code>pipeline ui</code> — o estúdio abre em http://127.0.0.1:8765. Verificação: <code>pipeline doctor</code>. A edição Web tem install.sh (systemd+Caddy) e Dockerfile — ver docs/EDITIONS.md.',
+    editions: '<b>Desktop</b> — edição local de um único dono: sem login, modelos locais (SD, TTS, clones de voz), grátis e privado. <b>Web (Cloud)</b> — edição multiusuário: contas, projetos e chaves por usuário, créditos, fila. O selo no rodapé esquerdo mostra a edição ativa.',
+    episode: '<b>Tema</b> — sobre o que é a história. <b>Desejos e notas do roteiro</b> é o seu briefing para a IA: estilo, tom, estrutura, público, o que evitar. <b>Texto do roteiro</b> pode ser colado pronto (ou .txt/.srt) — senão a IA escreve. <b>Formato</b> controla ritmo, TTS e música. <b>Duração em minutos é referência opcional</b> — o resultado segue o conteúdo. <b>Estilo visual</b> — preset de imagens; o botão de configuração abre o chat de coautor IA. <b>Prévia de cena</b> — o botão ▶ no storyboard renderiza só aquela cena e reproduz.',
+    voices: 'As vozes integradas funcionam de imediato. Clonagem pelo app local <b>VoiceStudio</b>: abra-o, gere uma API key nas configurações e coloque no seu <code>.env</code> como <code>VOICESTUDIO_API_KEY=…</code>; depois escolha o provedor <code>voice_studio</code>. Os clones são criados dentro do VoiceStudio. Só clone vozes com direito.',
+    token: '«Access token required (UI_TOKEN from .env)» aparece quando o dono do servidor ativou a proteção da API: <code>UI_TOKEN=segredo</code> no <code>.env</code>. Digite o mesmo segredo quando a UI pedir, ou adicione <code>?token=…</code> à URL. NÃO é senha da conta nem API-key de IA.',
+    workers: 'Na edição Web um episódio pode ir para “na fila (worker)”: uma máquina worker conectada ao servidor executa (com as próprias chaves e modelos) e devolve o vídeo e artefatos ao seu projeto. Configurado pelo dono do servidor (docs/RFC_HYBRID_WORKERS.md).',
+    faq: '<b>Onde ficam os vídeos?</b> Na pasta do run: <code>runs/&lt;id&gt;/video/episode.mp4</code>; com export_dir — cópia na sua pasta.<br><b>É grátis?</b> O produto é open source (MIT) e grátis localmente; você paga só as chaves dos provedores de nuvem.<br><b>Biblioteca vazia?</b> Adicione tópicos e referências.<br><b>Clonar voz alheia?</b> Não — só a própria ou com permissão explícita.<br><b>Trocar de conta?</b> Clique na linha de conta abaixo à esquerda.'
+  },
+  fr: {
+    install: '<b>Non, pas d’exe.</b> Installation depuis les sources : clonez le dépôt → <code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, FFmpeg dans le PATH) → <code>pipeline ui</code> — le studio s’ouvre sur http://127.0.0.1:8765. Vérification : <code>pipeline doctor</code>. L’édition Web fournit un installateur (systemd+Caddy) et un Dockerfile — voir docs/EDITIONS.md.',
+    editions: '<b>Desktop</b> — édition locale mono-propriétaire : sans connexion, modèles locaux (SD, TTS, clones de voix), gratuit et privé. <b>Web (Cloud)</b> — édition multi-utilisateurs : comptes, projets et clés par utilisateur, crédits, file d’attente. Le badge du pied gauche indique l’édition active.',
+    episode: '<b>Thème</b> — de quoi parle l’histoire. <b>Souhaits et notes du script</b> est votre brief pour l’IA : ton, structure, public, sujets à éviter. <b>Texte du script</b> peut être collé prêt (ou fichier .txt/.srt) — sinon l’IA l’écrit. <b>Format</b> contrôle le rythme, le TTS et la musique. <b>La durée en minutes est une cible optionnelle</b> — le résultat suit le contenu. <b>Style visuel</b> — preset d’images ; le bouton de réglage ouvre le chat de co-auteur IA. <b>Aperçu de scène</b> — le bouton ▶ du storyboard rend uniquement cette scène et la joue.',
+    voices: 'Les voix intégrées fonctionnent immédiatement. Le clonage passe par l’appli locale <b>VoiceStudio</b> : lancez-la, générez une clé API dans ses réglages, mettez-la dans votre <code>.env</code> comme <code>VOICESTUDIO_API_KEY=…</code> ; puis choisissez le fournisseur <code>voice_studio</code>. Les clones se créent dans VoiceStudio. Ne clonez que les voix dont vous avez les droits.',
+    token: '« Access token required (UI_TOKEN from .env) » apparaît quand le propriétaire du serveur a activé la protection API : <code>UI_TOKEN=secret</code> dans <code>.env</code>. Saisissez le même secret quand l’UI le demande, ou ajoutez <code>?token=…</code> à l’URL. Ce n’est NI un mot de passe de compte NI une clé API d’IA.',
+    workers: 'Dans l’édition Web un épisode peut passer « en file (worker) » : une machine worker connectée au serveur l’exécute (avec ses propres clés et modèles) et renvoie la vidéo et les artefacts dans votre projet. Configuré par le propriétaire (docs/RFC_HYBRID_WORKERS.md).',
+    faq: '<b>Où sont stockées les vidéos ?</b> Dans le dossier du run : <code>runs/&lt;id&gt;/video/episode.mp4</code> ; avec export_dir — une copie vers votre dossier.<br><b>Est-ce gratuit ?</b> Le produit est open source (MIT) et gratuit en local ; vous ne payez que vos clés de fournisseurs cloud.<br><b>Bibliothèque vide ?</b> Ajoutez des thèmes et des références.<br><b>Cloner la voix d’autrui ?</b> Non — la vôtre, ou avec permission explicite.<br><b>Changer de compte ?</b> Cliquez sur la ligne de compte en bas à gauche.'
+  },
+  de: {
+    install: '<b>Nein, keine exe.</b> Installation aus dem Quellcode: Repo klonen → <code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, FFmpeg im PATH) → <code>pipeline ui</code> — das Studio öffnet sich auf http://127.0.0.1:8765. Systemcheck: <code>pipeline doctor</code>. Die Web-Edition bringt Installer (systemd+Caddy) und Dockerfile mit — siehe docs/EDITIONS.md.',
+    editions: '<b>Desktop</b> — lokale Ein-Personen-Edition: ohne Anmeldung, lokale Modelle (SD, TTS, Voice-Clones), kostenlos und privat. <b>Web (Cloud)</b> — Mehrbenutzer-Edition: Accounts, Projekte und Keys pro Nutzer, Credits, Warteschlange. Das Badge im linken Fuß zeigt die aktive Edition.',
+    episode: '<b>Thema</b> — worum die Geschichte geht. <b>Skript-Wünsche & Notizen</b> ist dein Briefing an die KI: Stil, Tonalität, Struktur, Publikum, Tabus. <b>Skript-Text</b> kann fertig eingefügt werden (oder .txt/.srt) — sonst schreibt die KI. <b>Format</b> steuert Tempo, TTS und Musik. <b>Dauer in Minuten ist ein optionaler Anhaltspunkt</b> — die Laufzeit folgt dem Inhalt. <b>Visueller Stil</b> — Bild-Preset; der Setup-Button öffnet den Konfigurator mit KI-Co-Autor-Chat. <b>Szenen-Vorschau</b> — der ▶-Button im Storyboard rendert nur diese Szene und spielt sie ab.',
+    voices: 'Integrierte Engine-Stimmen funktionieren sofort. Voice-Cloning über die lokale App <b>VoiceStudio</b>: starten, in den Einstellungen einen API-Key erzeugen, in die eigene <code>.env</code> als <code>VOICESTUDIO_API_KEY=…</code> eintragen; dann den Provider <code>voice_studio</code> im Episodenformular wählen. Clones entstehen in VoiceStudio. Nur Stimmen klonen, an denen du Rechte hast.',
+    token: '„Access token required (UI_TOKEN from .env)“ erscheint, wenn der Serverbetreiber den API-Schutz aktiviert hat: <code>UI_TOKEN=Geheimnis</code> in der <code>.env</code>. Denselben Geheimnis eingeben, wenn die UI fragt, oder <code>?token=…</code> an die URL hängen. Es ist NICHT das Konto-Passwort und kein KI-API-Key.',
+    workers: 'In der Web-Edition kann eine Episode „in der Warteschlange (worker)“ landen: eine mit dem Server verbundene Worker-Maschine führt sie aus (mit eigenen Keys und Modellen) und lädt Video und Artefakte in dein Projekt zurück. Vom Serverbetreiber eingerichtet (docs/RFC_HYBRID_WORKERS.md).',
+    faq: '<b>Wo landen die Videos?</b> Im Run-Ordner: <code>runs/&lt;id&gt;/video/episode.mp4</code>; mit export_dir — Kopie in deinen Ordner.<br><b>Ist es gratis?</b> Das Produkt ist open source (MIT) und lokal kostenlos; du zahlst nur deine Provider-Keys für Cloud-APIs.<br><b>Bibliothek leer?</b> Themen und Referenzen hinzufügen.<br><b>Fremde Stimme klonen?</b> Nein — nur die eigene oder mit expliziter Erlaubnis.<br><b>Konto wechseln?</b> Auf die Konto-Zeile unten links klicken.'
+  },
+  ja: {
+    install: '<b>いいえ、exeはありません。</b>ソースから導入：リポジトリをclone → <code>pip install -e "pipeline[desktop]"</code>（Python 3.11+とPATH上のFFmpeg）→ <code>pipeline ui</code> — スタジオは http://127.0.0.1:8765 で開きます。診断は <code>pipeline doctor</code>。Webエディションにはinstall.sh（systemd+Caddy）とDockerfileがあります — docs/EDITIONS.md 参照。',
+    editions: '<b>Desktop</b> — 一所有者のローカル版：サインイン不要、ローカルモデル（画像生成・TTS・ボイスクローン）、無料でプライベート。<b>Web（クラウド）</b> — マルチユーザー版：アカウント、ユーザーごとのプロジェクトとキー、クレジット、キュー。左下のバッジが稼働中のエディションを示します。',
+    episode: '<b>トピック</b> — 何についての物語か。<b>脚本の要望とメモ</b>はAIへの指示書です：語り口、トーン、構成、対象読者、避けること。<b>脚本テキスト</b>は貼り付け可能（.txt/.srtファイルも）— なければAIが執筆。<b>フォーマット</b>はテンポ・TTS・音楽を制御。<b>分数の長さは任意の目安</b> — 実際の長さは内容に沿います。<b>ビジュアルスタイル</b> — 画像プリセット；設定ボタンでAI共作チャット付き設定を開きます。<b>シーンプレビュー</b> — 絵コンテの ▶ ボタンでそのシーンだけをレンダリングして再生します。',
+    voices: '内蔵エンジンボイスはすぐ使えます。ボイスクローンはローカルアプリ <b>VoiceStudio</b> 経由：起動し、設定でAPIキーを生成、<code>.env</code> に <code>VOICESTUDIO_API_KEY=…</code> を追記、フォームで <code>voice_studio</code> プロバイダーを選択。クローンはVoiceStudio内で作成します。権利のある声だけをクローンしてください。',
+    token: '「Access token required (UI_TOKEN from .env)」はサーバー管理者がAPI保護を有効化している場合に表示されます：<code>.env</code> に <code>UI_TOKEN=シークレット</code> が設定済み。UIが求めたら同じシークレットを入力するか、URLに <code>?token=…</code> を付けてください。アカウントのパスワードでもAIのAPIキーでもありません。',
+    workers: 'Webエディションではエピソードが「キュー内（worker）」になることがあります：サーバーに接続されたワーカーマシンが実行し（独自のキーとモデルで）、完成した動画と成果物をプロジェクトへ返します。設定はサーバー管理者が行います（docs/RFC_HYBRID_WORKERS.md）。',
+    faq: '<b>動画はどこに保存？</b>ランフォルダ：<code>runs/&lt;id&gt;/video/episode.mp4</code>；export_dir指定時はそのフォルダにもコピー。<br><b>無料？</b>製品はオープンソース（MIT）でローカル実行は無料；クラウドAPIは自分のプロバイダーキーの費用のみ。<br><b>ライブラリが空？</b>トピックと参照を追加してください。<br><b>他人の声をクローン？</b>いいえ — 自分の声か明示的な許可がある場合のみ。<br><b>アカウント切替？</b>左下のアカウント行をクリック。'
+  }
+};
+
 function guide(){
   const m = document.createElement('div');
   m.appendChild(el(`<div class="pagehead"><div><h2>${t('nav.guide')}</h2><p>${t('guide.sub')}</p></div></div>`));
   const sect = (title, body) => {
-    const c = el(`<div class="card" style="margin-bottom:16px"><h3>${title}</h3>${body}</div>`);
+    const c = el(`<div class="card" style="margin-bottom:16px"><h3>${title}</h3><div>${body}</div></div>`);
     m.appendChild(c);
   };
-  const ru = (s) => `<div>${s}</div>`;
-  const en = (s) => `<div class="muted" style="margin-top:6px">${s}</div>`;
+  const L = GUIDE[LANG] || GUIDE.en;
 
-  sect(t('guide.install.t'),
-    ru('<b>Нет, не через exe.</b> Продукт ставится из исходников: <code>git clone</code> репозитория → ' +
-       '<code>pip install -e "pipeline[desktop]"</code> (нужны Python 3.11+, FFmpeg на PATH) → ' +
-       '<code>pipeline ui</code> — интерфейс откроется на http://127.0.0.1:8765. ' +
-       'Проверка системы: <code>pipeline doctor</code>.') +
-    en('<b>No, there is no exe.</b> The product installs from source: clone the repo, ' +
-       '<code>pip install -e "pipeline[desktop]"</code> (Python 3.11+, FFmpeg on PATH), then ' +
-       '<code>pipeline ui</code> — the studio opens at http://127.0.0.1:8765. Run <code>pipeline doctor</code> to check the system. ' +
-       'For the Web edition there is also an installer script (systemd+Caddy) and a Dockerfile — see docs/EDITIONS.md.'));
-
-  sect(t('guide.editions.t'),
-    ru('<b>Desktop</b> — локальная версия для одного владельца: без входа, локальные модели (SD, озвучка, клоны голоса), всё бесплатно и приватно. ' +
-       '<b>Web (Cloud)</b> — многопользовательская версия: вход по аккаунту, у каждого свои проекты и ключи, кредиты, очередь. Флаг в футере слева показывает, какая версия запущена.') +
-    en('<b>Desktop</b> — the local single-owner edition: no sign-in, local models (image generation, TTS, voice clones), free and private. ' +
-       '<b>Web (Cloud)</b> — the multi-user edition: accounts, per-user projects and keys, credits, a run queue. The badge in the left footer shows which edition is running.'));
-
-  sect(t('guide.episode.t'),
-    ru('<b>Тема</b> — о чём история. <b>Пожелания и пометки</b> — это твой запрос к нейросети: подача, тон, структура, аудитория, что не трогать. ' +
-       '<b>Сценарий</b> можно вставить готовым (или файлом .txt/.srt) — иначе текст напишет ИИ по теме и пожеланиям. ' +
-       '<b>Формат</b> задаёт темп смены кадров, озвучку и музыку. ' +
-       '<b>Длительность в минутах — необязательный ориентир</b>: конвейер подгоняет хронометраж под содержание, итог может отличаться от числа. ' +
-       '<b>Визуальный стиль</b> — пресет картинок; кнопка «Настроить» открывает конфигуратор и чат с ИИ-соавтором: опиши вид картинок словами — получишь готовый пресет, решишь, добавлять ли его.') +
-    en('<b>Topic</b> — what the story is about. <b>Script wishes &amp; notes</b> is your brief to the AI: delivery, tone, structure, audience, what to avoid. ' +
-       '<b>Script text</b> can be pasted (or a .txt/.srt file) — otherwise the AI writes it from the topic and your notes. ' +
-       '<b>Format</b> controls pacing, TTS and music. <b>Duration in minutes is an optional target</b> — the pipeline fits the runtime to the content, so the result may differ from the number. ' +
-       '<b>Visual style</b> — the image preset; the setup button opens the configurator with an AI co-author chat: describe the look, get a ready preset, decide whether to add it.'));
-
-  sect(t('guide.voices.t'),
-    ru('Встроенные голоса движков работают сразу. Клонирование голоса — через локальное приложение <b>VoiceStudio</b>: запусти его, сгенерируй API-ключ в его настройках и вставь в свой <code>.env</code> как <code>VOICESTUDIO_API_KEY=…</code>; затем выбери провайдера <code>voice_studio</code> в форме выпуска. Клоны создаются в самом приложении VoiceStudio. Клонировать можно только голоса, на которые у тебя есть право.') +
-    en('Built-in engine voices work out of the box. Voice cloning goes through the local <b>VoiceStudio</b> app: start it, generate an API key in its settings, put it into your <code>.env</code> as <code>VOICESTUDIO_API_KEY=…</code>, then pick the <code>voice_studio</code> provider in the episode form. Clones are created inside VoiceStudio. Only clone voices you have the rights to.'));
-
-  sect(t('guide.token.t'),
-    ru('«Access token required (UI_TOKEN from .env)» появляется, когда владелец сервера включил защиту API: в <code>.env</code> задан <code>UI_TOKEN=секрет</code> — это защита при доступе к интерфейсу из сети (не только localhost). Чтобы войти, введи тот же секрет: интерфейс попросит токен и запомнит его, либо добавь <code>?token=…</code> к ссылке. Это НЕ пароль аккаунта и не API-ключ нейросетей.') +
-    en('«Access token required (UI_TOKEN from .env)» appears when the server owner enabled API protection: <code>UI_TOKEN=secret</code> is set in <code>.env</code> — it protects the UI when it is exposed beyond localhost. Enter the same secret when the UI asks for a token (it is remembered), or append <code>?token=…</code> to the URL. It is NOT an account password and not an AI API key.'));
-
-  sect(t('guide.workers.t'),
-    ru('В Web-версии эпизод может уйти в состояние «в очереди (worker)»: его выполнит машина-воркер, подключённая к серверу (у неё свои ключи и модели), а готовое видео и артефакты вернутся в твой проект. Воркер настраивает владелец сервера (см. docs/RFC_HYBRID_WORKERS.md).') +
-    en('In the Web edition an episode may go to “queued (worker)”: a worker machine connected to the server runs it (with its own keys and models) and uploads the finished video and artifacts back to your project. Workers are set up by the server owner (see docs/RFC_HYBRID_WORKERS.md).'));
-
-  sect(t('guide.faq.t'),
-    ru('<b>Куда сохраняются видео?</b> В папке прогона: <code>runs/&lt;id&gt;/video/episode.mp4</code>; при заданном export_dir — копия в твою папку.<br>' +
-       '<b>Это бесплатно?</b> Продукт открыт (MIT) и работает у тебя локально бесплатно; платишь только своим ключам провайдеров, если пользуешься облачными API.<br>' +
-       '<b>Библиотека пустая?</b> Добавь темы и референсы — они появятся в банке тем и прикрепятся к выпускам.<br>' +
-       '<b>Можно клонировать чужой голос?</b> Нет — только свой или с явного разрешения владельца голоса.<br>' +
-       '<b>Где сменить аккаунт?</b> Клик по строке аккаунта слева внизу.') +
-    en('<b>Where are videos saved?</b> In the run folder: <code>runs/&lt;id&gt;/video/episode.mp4</code>; with export_dir set — a copy goes to your folder.<br>' +
-       '<b>Is it free?</b> The product is open source (MIT) and free to run locally; you only pay your own provider keys when using cloud APIs.<br>' +
-       '<b>Library is empty?</b> Add topics and references — they appear in the topic bank and attach to episodes.<br>' +
-       '<b>Can I clone someone else’s voice?</b> No — only your own, or with the voice owner’s explicit permission.<br>' +
-       '<b>How to switch accounts?</b> Click the account line in the bottom-left.'));
+  sect(t('guide.install.t'), L.install);
+  sect(t('guide.editions.t'), L.editions);
+  sect(t('guide.episode.t'), L.episode);
+  sect(t('guide.voices.t'), L.voices);
+  sect(t('guide.token.t'), L.token);
+  sect(t('guide.workers.t'), L.workers);
+  sect(t('guide.faq.t'), L.faq);
 
   return m;
 }

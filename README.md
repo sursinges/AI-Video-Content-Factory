@@ -1,5 +1,7 @@
 # AI Video Content Factory
 
+**English** | [Русский](README.ru.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [Português](README.pt-BR.md) | [中文](README.zh-CN.md) | [日本語](README.ja.md) | [हिन्दी](README.hi.md) | [العربية](README.ar.md)
+
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform: Windows](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)](#system-requirements)
@@ -275,9 +277,10 @@ The orchestrator skips already completed stages and resumes from the exact point
 - [x] **Web Studio (UI):** Interactive storyboard, scene regeneration, timecode editing, phone remote.
 - [x] **Diagnostics & Pre-flight:** Built-in `doctor` command and validation checks.
 - [x] **Universal Formats:** 9:16 vertical shorts, explainers, tech reviews, and documentary presets.
-- [ ] **Direct Image-to-Video Transitions:** Native Kling / Seedance video generation per hero scene.
+- [x] **Image-to-Video Wiring (GAP-01):** fal.ai Kling provider wired into M3/M4 per scene (`visual.video_scenes`); mock covered, live runs need `FAL_KEY`.
+- [x] **Scene Preview:** per-scene draft player in the storyboard (image + clip, no full re-render).
+- [x] **Cloud Packaging:** Dockerfile (web edition) + systemd/Caddy installer for Linux hosts.
 - [ ] **Batch Series Production:** Automated queue for processing multi-episode playlists.
-- [ ] **Cloud Packaging:** Optional headless Docker container for remote Linux rendering nodes.
 
 ---
 

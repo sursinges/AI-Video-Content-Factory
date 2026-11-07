@@ -926,6 +926,48 @@ def api_run_modify_scene(run_id: str, body: dict):
     }
 
 
+@app.post("/api/run/{run_id}/preview_scene")
+def api_run_preview_scene(run_id: str, body: dict):
+    """Fast per-scene preview (owner request): render ONLY this scene's clip
+    at half resolution (no xfade/mix/mux) and return a playable URL. The
+    storyboard image is already shown inline; this adds the video player."""
+    idx = int(body.get("scene_index", 0))
+    rd = runs_root() / run_id
+    scenes_f = rd / "visual" / "scenes.json"
+    if not scenes_f.exists():
+        return JSONResponse({"error": "scenes not found"}, status_code=404)
+    scenes = json.loads(scenes_f.read_text(encoding="utf-8")).get("scenes", [])
+    if idx < 0 or idx >= len(scenes):
+        return JSONResponse({"error": f"scene index {idx} out of range"}, status_code=400)
+    if not (rd / "audio" / "audio_result.json").exists():
+        return JSONResponse({"error": "audio not ready — run m2 first"}, status_code=400)
+    sc = scenes[idx]
+
+    from core.media import normalize_scene_video, render_scene_clip
+
+    # preview resolution: half of the assembly size (zoompan 4x upscale is the cost driver)
+    size = "960x540"
+    work_dir = rd / "video" / "_work"
+    work_dir.mkdir(parents=True, exist_ok=True)
+    out = work_dir / "preview_scene.mp4"
+
+    audio_res = json.loads((rd / "audio" / "audio_result.json").read_text(encoding="utf-8"))
+    total_dur = audio_res["duration_sec"]
+    base = [max(s.get("end", 0.0) - s.get("start", 0.0), 0.4) for s in scenes]
+    FADE = 1.2
+    k = max(len(scenes) - 1, 0)
+    scale = (total_dur + FADE * k) / sum(base)
+    duration = max(base[idx] * scale, 0.5)
+
+    video_asset = sc.get("video_asset")
+    if video_asset and Path(video_asset).exists():
+        normalize_scene_video(video_asset, out, duration=duration, size=size)
+    else:
+        render_scene_clip(sc.get("asset"), out, duration=duration,
+                          effect=sc.get("effect") or "zoom_in", size=size)
+    return {"ok": True, "url": f"/files/runs/{run_id}/video/_work/preview_scene.mp4?t={int(time.time())}"}
+
+
 @app.post("/api/storyboard/enhance_prompt")
 def api_storyboard_enhance_prompt(body: dict):
     """Refines a scene visual prompt using LLM grounded in ASSET_RULES.md."""
