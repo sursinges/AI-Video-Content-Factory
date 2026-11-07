@@ -1,12 +1,13 @@
 """Minimal MCP (Model Context Protocol) stdio server for pipeline — one-click
-connect for Claude Desktop / ZCode. Line-delimited JSON-RPC 2.0 over stdio.
+connect for Claude Desktop / Claude Code / Codex CLI / ZCode. Line-delimited
+JSON-RPC 2.0 over stdio.
 
-Tools exposed: list_runs, run_status, create_episode.
-Run:  python tools/mcp_server.py      (configured via claude_desktop_config.json)
+Tools exposed: list_runs, run_status, create_episode, resume_run, doctor.
+Run:  python tools/mcp_server.py      (configured via claude_desktop_config.json
+or ~/.codex/config.toml — ready-to-paste configs: GET /api/mcp/clients on the UI)
 """
 
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -18,13 +19,20 @@ TOOLS = [
     {"name": "list_runs", "description": "List recent pipeline episodes with status",
      "inputSchema": {"type": "object", "properties": {}}},
     {"name": "run_status", "description": "Steps + artifacts of one episode run",
-     "inputSchema": {"type": "object", "properties": {"run_id": {"type": "string"}},
+     "inputSchema": {"type": "object",
+                     "properties": {"run_id": {"type": "string"}},
                      "required": ["run_id"]}},
     {"name": "create_episode", "description": "Launch a new episode (topic or own script)",
      "inputSchema": {"type": "object",
                      "properties": {"topic": {"type": "string"}, "minutes": {"type": "number"},
                                     "script": {"type": "string"}},
                      "required": []}},
+    {"name": "resume_run", "description": "Resume a failed/interrupted episode from its last completed stage",
+     "inputSchema": {"type": "object",
+                     "properties": {"run_id": {"type": "string"}},
+                     "required": ["run_id"]}},
+    {"name": "doctor", "description": "System diagnostics: python, ffmpeg, edition, keys",
+     "inputSchema": {"type": "object", "properties": {}}},
 ]
 
 
@@ -47,21 +55,44 @@ def tool_run_status(args):
     return [{"step": s["step"], "status": s["status"], "error": s["error"]} for s in steps]
 
 
-def tool_create_episode(args):
-    body = json.dumps({"topic": args.get("topic") or "", "target_minutes": args.get("minutes", 1),
-                       "own_script": args.get("script") or ""}).encode("utf-8")
+def _ui_post(path: str, body: dict) -> dict:
     import urllib.request
-    req = urllib.request.Request("http://127.0.0.1:8765/api/episode", data=body,
+
+    req = urllib.request.Request(f"http://127.0.0.1:8765{path}",
+                                 data=json.dumps(body).encode("utf-8"),
                                  headers={"Content-Type": "application/json"}, method="POST")
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def tool_create_episode(args):
     try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            return json.loads(r.read().decode("utf-8"))
+        return _ui_post("/api/episode", {"topic": args.get("topic") or "",
+                                         "target_minutes": args.get("minutes", 1),
+                                         "own_script": args.get("script") or ""})
     except Exception as e:  # noqa: BLE001
         return {"error": f"UI server on :8765 unreachable ({e}) — start it with 'pipeline ui'"}
 
 
+def tool_resume_run(args):
+    try:
+        return _ui_post(f"/api/run/{args['run_id']}/resume", {})
+    except Exception as e:  # noqa: BLE001
+        return {"error": f"UI server on :8765 unreachable ({e}) — start it with 'pipeline ui'"}
+
+
+def tool_doctor(_args):
+    from core.diagnostics import run_diagnostics
+
+    report = run_diagnostics(ROOT)
+    return {"overall": report["overall"],
+            "checks": [{"name": c["name"], "status": c["status"], "detail": c.get("detail", "")}
+                       for c in report["checks"]]}
+
+
 HANDLERS = {"list_runs": tool_list_runs, "run_status": tool_run_status,
-            "create_episode": tool_create_episode}
+            "create_episode": tool_create_episode, "resume_run": tool_resume_run,
+            "doctor": tool_doctor}
 
 
 def main():

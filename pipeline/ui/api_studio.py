@@ -54,6 +54,15 @@ def api_voices_add(body: dict, request: "Request" = None):
         return JSONResponse({"error": "voice cloning is coming soon (hosted)", "soon": True}, status_code=403)
     d = _voices()
     vid = (body.get("id") or "voice").strip().replace(" ", "_")
+    if body.get("engine") == "voice_studio":
+        # VoiceStudio profile/voice id — no local sample needed (AGPL app, HTTP API)
+        d["voices"].append({
+            "id": vid, "name": body.get("name", vid),
+            "engine": "voice_studio",
+            "voice": (body.get("voice") or "alloy").strip(),
+        })
+        _save_voices(d)
+        return {"ok": True}
     b64 = body.get("audio_b64", "")
     if b64:
         raw = base64.b64decode(b64.split(",")[-1])
@@ -98,11 +107,17 @@ def api_voices_preview(body: dict, request: "Request" = None):
         st.close()
         return JSONResponse({"error": "engine " + voice.get("engine", "") + " is not configured"}, status_code=400)
     out = runs_root() / "_voices" / f"{voice['id']}.mp3"
+    payload = {
+        "text": body.get("text") or "Hello. This is my cloned voice in the pipeline.",
+        "out_path": str(out), "language": body.get("language", "ru"),
+    }
+    if voice.get("engine") == "voice_studio":
+        payload["voice"] = voice.get("voice", "alloy")
+    else:
+        payload["ref_audio"] = voice.get("ref_audio", "")
+        payload["ref_text"] = voice.get("ref_text", "")
     try:
-        engine.execute({
-            "text": body.get("text") or "Hello. This is my cloned voice in the pipeline.",
-            "out_path": str(out), "language": body.get("language", "ru"),
-            "ref_audio": voice["ref_audio"], "ref_text": voice["ref_text"]})
+        engine.execute(payload)
         st.close()
         return {"ok": True, "path": str(out)}
     except Exception as e:  # noqa: BLE001
@@ -225,16 +240,23 @@ def api_studio_build(body: dict):
 
     voice_override = body.get("voice") or {}
     scene_files, timeline = [], []
+    mock_tts = router.registry.get("tts/mock_tts") or router.registry.get("tts/mock")
     for i, sc in enumerate(scenes):
         text = (sc.get("text") or "").strip()
         dur = float(sc.get("duration") or 0)
-        # 1) narration
+        # 1) narration — configured engine first; on failure fall back to the
+        # mock voice so "Собрать видео" always completes (owner feedback)
         if text:
             audio = run_dir / "scenes" / f"s{i:02d}.mp3"
             payload = {"text": text, "out_path": str(audio), "format": "mp3",
                        "language": body.get("language", "ru")}
             payload.update({k: voice_override[k] for k in ("ref_audio", "ref_text") if voice_override.get(k)})
-            res = router.call("tts", payload)
+            try:
+                res = router.call("tts", payload)
+            except Exception:  # noqa: BLE001 — no key/quota: silent mock narration
+                if not mock_tts:
+                    raise
+                res = mock_tts.execute(dict(payload, format="mp3"))
             try:
                 dur = sf.info(res["audio_path"]).duration
             except Exception:  # noqa: BLE001

@@ -52,11 +52,49 @@ def tenant_dir(workspace: str | Path, uid: str | None = None) -> Path:
     return root
 
 
+# Config files copied into a tenant's config dir on first use, so every
+# config_root() read succeeds even before the tenant customized anything.
+_TENANT_SEED_FILES = [
+    "formats.yaml", "providers.yaml", "channel.profile.yaml",
+    "visual_presets.yaml", "visual_presets_custom.yaml",
+    "brand_kit.yaml", "prompt_library.yaml",
+]
+_TENANT_SEED_DIRS = ["presets", "profiles"]
+
+
+def _seed_tenant_config(workspace: str | Path, root: Path) -> None:
+    import shutil
+
+    gcfg = Path(workspace) / "config"
+    for name in _TENANT_SEED_FILES:
+        src, dst = gcfg / name, root / name
+        if src.exists() and not dst.exists():
+            try:
+                shutil.copy2(src, dst)
+            except OSError:
+                pass
+    for d in _TENANT_SEED_DIRS:
+        gd = gcfg / d
+        if not gd.exists():
+            continue
+        for f in gd.iterdir():
+            dst = root / d / f.name
+            if f.is_file() and not dst.exists():
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                try:
+                    shutil.copy2(f, dst)
+                except OSError:
+                    pass
+
+
 def config_root(workspace: str | Path) -> Path:
     """Per-tenant config dir (providers.yaml / profile / formats / presets /
-    visual presets) — the tenant BYOK layer. Global config stays for owners."""
+    visual presets) — the tenant BYOK layer. Seeded from the host config on
+    first use so direct reads never 404; global config stays for owners."""
     if current_tenant():
-        return tenant_dir(workspace) / "config"
+        root = tenant_dir(workspace) / "config"
+        _seed_tenant_config(workspace, root)
+        return root
     return Path(workspace) / "config"
 
 

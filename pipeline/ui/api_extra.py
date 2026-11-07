@@ -393,13 +393,15 @@ def api_run_scenes(run_id: str):
         return {"scenes": []}
     scenes = json.loads(f.read_text(encoding="utf-8")).get("scenes", [])
     return {"scenes": [{"id": s["id"], "start": s["start"], "end": s["end"],
+                        "text": s.get("text") or s.get("text_ref", ""),
+                        "voice": s.get("voice"),
                         "asset": "/files/runs/" + run_id + "/visual/assets/" + Path(s["asset"]).name
                         if s.get("asset") else None} for s in scenes]}
 
 
 @app.get("/api/accounts")
 def api_accounts():
-    acc = config_root() / "accounts.yaml"
+    acc = WORKSPACE / "config" / "accounts.yaml"  # host-level (YouTube pool)
     if not acc.exists():
         return {"accounts": [], "rotation": "manual"}
     d = yaml.safe_load(acc.read_text(encoding="utf-8")) or {}
@@ -408,7 +410,7 @@ def api_accounts():
 
 @app.post("/api/accounts/save")
 def api_accounts_save(body: dict):
-    acc = config_root() / "accounts.yaml"
+    acc = WORKSPACE / "config" / "accounts.yaml"
     acc.write_text(yaml.safe_dump(body, allow_unicode=True, sort_keys=False), encoding="utf-8")
     return {"ok": True}
 
@@ -926,6 +928,78 @@ def api_run_modify_scene(run_id: str, body: dict):
     }
 
 
+@app.post("/api/run/{run_id}/script_save")
+def api_run_script_save(run_id: str, body: dict):
+    """Run-workspace: edit script chunk texts in place (deep script editing)."""
+    chunks = body.get("chunks") or []
+    f = runs_root() / run_id / "script" / "script.json"
+    if not f.exists():
+        return JSONResponse({"error": "script not found"}, status_code=404)
+    data = json.loads(f.read_text(encoding="utf-8"))
+    existing = data.get("chunks") or []
+    if len(chunks) != len(existing):
+        return JSONResponse({"error": "chunk count mismatch"}, status_code=400)
+    for old, new in zip(existing, chunks):
+        text = str(new.get("text") or "").strip()
+        if not text:
+            return JSONResponse({"error": "chunk text cannot be empty"}, status_code=400)
+        old["text"] = text
+    f.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"ok": True}
+
+
+@app.post("/api/run/{run_id}/scene_voice")
+def api_run_scene_voice(run_id: str, body: dict):
+    """Run-workspace Voice tab: audition a scene with a chosen TTS provider +
+    voice, and persist the choice on the scene (scenes.json .voice)."""
+    idx = int(body.get("scene_index", 0))
+    rd = runs_root() / run_id
+    scenes_f = rd / "visual" / "scenes.json"
+    if not scenes_f.exists():
+        return JSONResponse({"error": "scenes not found"}, status_code=404)
+    scenes = json.loads(scenes_f.read_text(encoding="utf-8")).get("scenes", [])
+    if idx < 0 or idx >= len(scenes):
+        return JSONResponse({"error": "scene index out of range"}, status_code=400)
+    sc = scenes[idx]
+    text = (sc.get("text") or sc.get("text_ref") or "").strip()
+    if not text:
+        return JSONResponse({"error": "scene has no text to voice"}, status_code=400)
+
+    provider_id = (body.get("provider") or "").strip()
+    voice = (body.get("voice") or "").strip()
+
+    import yaml as _yaml
+    from core.providers import router as router_mod
+
+    load_env_ctx()
+    provs = _yaml.safe_load((config_root() / "providers.yaml").read_text(encoding="utf-8"))
+    registry = router_mod.build_registry(provs, router_mod._resolve_secret)
+    pid = provider_id or (provs.get("defaults") or {}).get("tts", "")
+    prov = registry.get("tts/" + pid)
+    if prov is None:
+        return JSONResponse({"error": f"tts provider '{pid}' not found"}, status_code=400)
+
+    out_dir = rd / "visual" / "scene_audio"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / f"{sc.get('id', f's{idx+1:03d}')}.mp3"
+    payload = {"text": text, "out_path": str(out), "format": "mp3",
+               "language": body.get("language", "ru")}
+    if voice:
+        payload["voice"] = voice
+        payload["voice_id"] = voice
+    try:
+        res = prov.execute(payload)
+    except Exception as e:  # noqa: BLE001 — report provider failures as JSON
+        return JSONResponse({"error": str(e)}, status_code=502)
+
+    sc["voice"] = {"provider": pid, "voice": voice or "default"}
+    scenes_f.write_text(json.dumps({"scenes": scenes}, ensure_ascii=False, indent=2), encoding="utf-8")
+    audio_path = res.get("audio_path", str(out))
+    url = f"/files/runs/{run_id}/visual/scene_audio/{out.name}?t={int(time.time())}"
+    return {"ok": True, "url": url, "audio_path": audio_path,
+            "voice": sc["voice"], "provider": pid}
+
+
 @app.post("/api/run/{run_id}/preview_scene")
 def api_run_preview_scene(run_id: str, body: dict):
     """Fast per-scene preview (owner request): render ONLY this scene's clip
@@ -1221,7 +1295,7 @@ def api_watched_save(body: dict):
     return {"ok": True, "enabled": enabled, "folder": folder, "minutes": minutes}
 
 
-# --- MCP one-click (5e): config snippet for Claude Desktop / ZCode ------------
+# --- MCP one-click (5e): ready-to-paste configs for MCP clients ---------------
 
 @app.get("/api/mcp/config")
 def api_mcp_config():
@@ -1231,6 +1305,28 @@ def api_mcp_config():
         "args": [str(WORKSPACE / "tools" / "mcp_server.py")],
     }},
         "note": "Paste this mcpServers block into claude_desktop_config.json to give LLMs access to list_runs / run_status / create_episode tools."}
+
+
+@app.get("/api/mcp/clients")
+def api_mcp_clients():
+    """Ready-to-paste MCP client configs (owner request): Claude Desktop,
+    Claude Code, Codex CLI, ZCode — each drives the pipeline via its tools
+    (list_runs / run_status / create_episode / resume_run / doctor)."""
+    py = str(PY)
+    server = str(WORKSPACE / "tools" / "mcp_server.py")
+    claude_desktop = json.dumps({"mcpServers": {"pipeline": {"command": py, "args": [server]}}}, indent=2)
+    claude_code = f'claude mcp add pipeline -- {py} {server}'
+    codex_toml = ('# ~/.codex/config.toml\n[mcp_servers.pipeline]\n'
+                  f'command = "{py}"\nargs = ["{server}"]')
+    zcode_json = json.dumps({"mcp": {"servers": {"pipeline": {"command": py, "args": [server]}}}}, indent=2)
+    return {
+        "claude_desktop": {"label": "Claude Desktop", "file": "%APPDATA%\\Claude\\claude_desktop_config.json (или ~/Library/Application Support/Claude/)", "config": claude_desktop},
+        "claude_code": {"label": "Claude Code (CLI)", "file": "терминал", "config": claude_code},
+        "codex": {"label": "ChatGPT / Codex CLI", "file": "~/.codex/config.toml", "config": codex_toml},
+        "zcode": {"label": "ZCode", "file": "~/.zcode/cli/config.json → mcp.servers", "config": zcode_json},
+        "chatgpt_note": "ChatGPT (веб/десктоп) подключает MCP-коннекторы по публичному HTTPS-URL — для локального stdio-сервера используй Claude Desktop / Claude Code / Codex CLI; удалённый коннектор появится вместе с Hybrid Cloud.",
+        "tools": ["list_runs", "run_status", "create_episode", "resume_run", "doctor"],
+    }
 
 
 from ui import api_auth  # noqa: E402  (P5-01: sessions, register/login, admin)
