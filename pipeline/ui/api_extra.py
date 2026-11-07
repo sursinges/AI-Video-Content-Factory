@@ -363,8 +363,12 @@ def api_run_script(run_id: str):
     if not f.exists():
         return JSONResponse({"error": "script not found"}, status_code=404)
     script = json.loads(f.read_text(encoding="utf-8"))
-    parts = [c["text"] for c in script.get("chunks", [])]
-    return {"title": script.get("title_working", ""), "parts": parts}
+    chunks = script.get("chunks", [])
+    parts = [c["text"] for c in chunks]
+    # "chunks" (raw, editable) added for the run-workspace script editor
+    return {"title": script.get("title_working", ""), "parts": parts,
+            "chunks": [{"part": c.get("part", i + 1), "text": c.get("text", "")}
+                       for i, c in enumerate(chunks)]}
 
 
 @app.get("/api/run/{run_id}/usage")
@@ -962,6 +966,8 @@ def api_run_scene_voice(run_id: str, body: dict):
         return JSONResponse({"error": "scene index out of range"}, status_code=400)
     sc = scenes[idx]
     text = (sc.get("text") or sc.get("text_ref") or "").strip()
+    # scene text_refs use " | " separators (topic fragments) — speak as sentences
+    text = text.replace(" | ", ". ").replace("|", ".").strip()
     if not text:
         return JSONResponse({"error": "scene has no text to voice"}, status_code=400)
 

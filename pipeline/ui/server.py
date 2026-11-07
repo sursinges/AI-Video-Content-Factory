@@ -41,6 +41,9 @@ BOOT_ID = uuid.uuid4().hex[:8]  # changes on server restart -> stale tabs reload
 async def _version_header(request, call_next):
     response = await call_next(request)
     response.headers["x-ui-version"] = BOOT_ID
+    if request.url.path.startswith("/api/"):
+        # API responses must never be served from browser cache across restarts
+        response.headers["Cache-Control"] = "no-store"
     return response
 
 
@@ -212,13 +215,18 @@ def _start_queue_watcher():
 @app.middleware("http")
 async def _tenant_middleware(request: Request, call_next):
     """Resolve the session -> tenant contextvar; in hosted_mode gate /api/* and
-    /files/* behind a session (UI_TOKEN owners and /api/auth/* pass through)."""
+    /files/* behind a session (UI_TOKEN owners and /api/auth/* pass through).
+    Cookies are shared across ports on 127.0.0.1 — the Desktop edition must
+    IGNORE them entirely, or a stray web-login cookie would flip it into
+    tenant context and hide all global runs."""
     token = request.cookies.get("ui_session") or ""
     if not token:
         auth = request.headers.get("authorization", "")
         if auth.startswith("Bearer "):
             token = auth[7:]
-    user = tenants.resolve_session(WORKSPACE, token) if token else None
+    user = None
+    if tenants.hosted_mode(WORKSPACE) and token:
+        user = tenants.resolve_session(WORKSPACE, token)
     request.state.tenant_user = user
     request.state.session_token = token
     tset = tenants.set_tenant(user["id"]) if user else None

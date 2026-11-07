@@ -26,7 +26,9 @@ dependencies = [
 desktop = [
     "torch>=2.1",
     "diffusers>=0.31,<1",
+    "tokenizers>=0.21,<0.22",  # pin: transformers 4.55.2 (coqui-tts compat) breaks on 0.23
     "faster-whisper>=1.0,<2",
+    "omegaconf>=2.3,<3",       # silero TTS (torch.hub) dependency
 ]
 dev = ["pytest>=8,<9"]
 secrets = ["keyring>=25,<26"]

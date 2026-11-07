@@ -1520,16 +1520,6 @@ async function viewStudio(runId) {
     </div>
   </div>`));
 
-  // Run workspace nav (owner request: move between frames/script/voice/video)
-  const wsNav = el(`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px" id="ws-nav"></div>`);
-  m.appendChild(wsNav);
-  const wsGo = (id, label) => {
-    const b = document.createElement('button');
-    b.className = 'btn btn-ghost btn-sm'; b.textContent = label;
-    b.onclick = () => { const el2 = document.getElementById(id); if (el2) el2.scrollIntoView({behavior: 'smooth', block: 'start'}); };
-    wsNav.appendChild(b);
-  };
-
   // Sleek Toolbar
   const isDraft = !!(rdata.draft && !pdata.has_video);
   const tb = el(`<div class="ep-toolbar">
@@ -2032,43 +2022,59 @@ async function viewStudio(runId) {
     <div id="ws-voice-list" style="display:flex;flex-direction:column;gap:8px">${t('загрузка…')}</div>
   </div>`);
   m.appendChild(wsVoice);
-  Promise.all([api(`/api/run/${runId}/scenes`), api('/api/voices'), api('/api/tts_voices')]).then(([scR, vR, tvR]) => {
+  Promise.all([api(`/api/run/${runId}/scenes`), api('/api/voices'),
+               api('/api/provider_options'), api('/api/tts_voices')]).then(([scR, vR, poR, tvR]) => {
     const list = wsVoice.querySelector('#ws-voice-list');
     const scenesList = (scR.scenes || []);
+    const ttsProviders = (poR.by_type || {}).tts || [];
     const engineVoices = {};
     (tvR.voices || []).forEach(v => { (engineVoices[v.provider || ''] = engineVoices[v.provider || ''] || []).push(v); });
-    const cloudVoices = (vR.voices || []);
+    const myClones = (vR.voices || []);
     list.innerHTML = '';
     scenesList.forEach((sc, i) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:90px 1fr 170px 130px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)';
-      const voiceOpts = ['<option value="">' + t('голос по умолч.') + '</option>']
-        .concat(cloudVoices.map(v => `<option value="${esc(v.id)}">${esc(v.name || v.id)}</option>`))
-        .concat((engineVoices[''] || []).map(v => `<option value="${esc(v.id)}">${esc(v.name || v.id)}</option>`));
+      row.style.cssText = 'display:grid;grid-template-columns:84px 1fr 150px 150px 110px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)';
+      const provOpts = ['<option value="">' + t('по умолч.') + '</option>']
+        .concat(ttsProviders.map(p => `<option value="${esc(p)}">${esc(hum(p))}</option>`));
       row.innerHTML = `<span class="tag">${esc(sc.scene_id || ('s' + (i + 1)))}</span>` +
-        `<span class="muted" style="font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(sc.text || sc.text_ref || '')}">${esc((sc.text || sc.text_ref || '—').slice(0, 60))}</span>` +
-        `<select data-voice="${i}" style="margin:0">${voiceOpts.join('')}</select>` +
+        `<span class="muted" style="font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(sc.text || '')}">${esc((sc.text || '—').slice(0, 55))}</span>` +
+        `<select data-prov="${i}" style="margin:0">${provOpts.join('')}</select>` +
+        `<select data-voice="${i}" style="margin:0"><option value="">${t('голос по умолч.')}</option></select>` +
         `<button class="btn btn-secondary btn-sm" data-aud="${i}">▶ ${t('voice.audition')}</button>`;
       list.appendChild(row);
-      const sel = row.querySelector('select');
-      if (sc.voice && sc.voice.voice) sel.value = sc.voice.voice;
+      const provSel = row.querySelector('[data-prov]');
+      const voiceSel = row.querySelector('[data-voice]');
+      const fillVoices = (pid) => {
+        const opts = ['<option value="">' + t('голос по умолч.') + '</option>']
+          .concat((engineVoices[pid] || []).map(v => `<option value="${esc(v.id)}">${esc(v.name || v.id)}</option>`))
+          .concat(pid === 'voice_studio' ? myClones.map(v => `<option value="${esc(v.voice || v.id)}">${esc(v.name)} (VS)</option>`) : []);
+        voiceSel.innerHTML = opts.join('');
+        if (sc.voice && sc.voice.provider === pid && sc.voice.voice) voiceSel.value = sc.voice.voice;
+      };
+      fillVoices('');
+      provSel.onchange = async () => {
+        fillVoices(provSel.value);
+        if (provSel.value) {
+          const r = await api('/api/tts_voices?provider=' + encodeURIComponent(provSel.value));
+          const opts = ['<option value="">' + t('голос по умолч.') + '</option>']
+            .concat((r.voices || []).map(v => `<option value="${esc(v.id)}">${esc(v.name || v.id)}</option>`));
+          voiceSel.innerHTML = opts.join('');
+          if (sc.voice && sc.voice.provider === provSel.value && sc.voice.voice) voiceSel.value = sc.voice.voice;
+        }
+      };
       row.querySelector('[data-aud]').onclick = async () => {
         const btn = row.querySelector('[data-aud]');
         btn.disabled = true; btn.textContent = t('voice.saving');
-        const provSel = (S.me || {}).user && (S.me.user.role === 'admin') ? (document.getElementById('p-tts') || {}).value : '';
         const r = await api(`/api/run/${runId}/scene_voice`, {method:'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({scene_index: i, voice: sel.value, provider: provSel || undefined})});
+          body: JSON.stringify({scene_index: i, provider: provSel.value || undefined,
+                                voice: voiceSel.value || undefined})});
         btn.disabled = false; btn.textContent = '▶ ' + t('voice.audition');
         if (r.ok && r.url) new Audio(r.url).play();
         else toast(r.error || t('ошибка'), 'err');
       };
     });
   });
-  wsGo('scene-inspector', t('ws.frames'));
-  wsGo('ws-script', t('ws.script'));
-  wsGo('ws-voice', t('ws.voice'));
-  if (pdata.has_video) wsGo('ws-video', t('ws.video'));
 
   main.appendChild(m);
   if (scenes.length) selectScene(0);

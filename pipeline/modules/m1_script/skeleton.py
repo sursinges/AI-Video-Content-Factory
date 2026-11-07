@@ -41,8 +41,15 @@ def gen_skeleton(ctx, n_parts: int, body_count: int, min_chars: int, max_chars: 
     }
     prompt = render("skeleton.md", variables)
     last_error = ""
-    for _ in range(2):  # one retry
-        resp = ctx.router.call("llm", {"prompt": prompt, "temperature": 0.8})
+    for attempt in range(3):
+        # retries must differ from attempt 1 — otherwise the router cache
+        # returns the same invalid JSON every time and the retry is a no-op
+        attempt_prompt = prompt
+        if attempt:
+            attempt_prompt = (f"{prompt}\n\nATTEMPT {attempt + 1}: the previous output failed "
+                              f"validation ({last_error}). Follow the constraints EXACTLY: "
+                              f"10-16 anchors, ideas = {body_count}, number_of_parts = {n_parts}.")
+        resp = ctx.router.call("llm", {"prompt": attempt_prompt, "temperature": 0.8 + 0.1 * attempt})
         data = extract_json(resp.get("text", ""))
         if data:
             try:

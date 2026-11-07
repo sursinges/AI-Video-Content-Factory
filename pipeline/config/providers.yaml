@@ -185,6 +185,16 @@ providers:
     steps: 25
     guidance: 7.0
 
+  # Local LLM via Ollama (zero cost, offline). Install: winget install Ollama.Ollama
+  # then `ollama pull qwen2.5:3b-instruct`. Good RU quality for a 3B; raise the
+  # model id for stronger hardware (qwen2.5:7b/14b, llama3.1:8b ...).
+  ollama_local:
+    type: llm
+    adapter: openai_compatible
+    base_url: http://127.0.0.1:11434/v1
+    model: qwen2.5:7b-instruct
+    timeout_sec: 900
+
   # YouTube publish (REAL upload) — activates when owner drops
   # client_secret*.json into pipeline/ (Google Cloud OAuth Desktop client).
   youtube_api:
